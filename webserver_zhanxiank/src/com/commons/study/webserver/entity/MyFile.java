@@ -111,7 +111,19 @@ public class MyFile {
 	}
 
 	
-	
+	public String toHtml(){
 
+		SimpleDateFormat sfd = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		String time=sfd.format(mdtime);	
+		StringBuilder  sb=new StringBuilder();
+		
+		path=path.replace("\\", "/");
+		
+       sb.append("<tr> <td> <a  href="+"'" +path +"'"  + "  onclick= \"getDatas(" +"'" +path +"'"+")\" >" +path+"  </a> </td> ")
+       .append(" <td>" +size+"b</td>  <td> "+  time+  "</td>    </tr>");
+       
+	   return sb.toString();
+			
+	}
 	
 }

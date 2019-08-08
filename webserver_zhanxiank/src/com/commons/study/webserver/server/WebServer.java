@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public class WebServer {
 
-	private static final int port = 8080; //端口
+	private static final int port = 8089; //端口
 
 	private boolean isShutDown = false; //是否关闭
 

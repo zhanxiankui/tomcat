@@ -50,17 +50,40 @@ public class HttpResponse implements Response {
 	 */
 	public void responseJson(List<String> list) throws IOException{
 		log.info("返回json形式的字符串");
-		
-		if(list.size()>0){
-			status = 200 + " " + httpContext.getStats("200");
-			writeHeader(HttpContext.getInstance().getType("json"), status);	
+			if(list==null||list.size()<0){
+			return;
 		}
-		
+	
+		status = 200 + " " + httpContext.getStats("200");
+		writeHeader(HttpContext.getInstance().getType("json"), status);	
 		for(String file:list){
 			outputStream.write(file.getBytes());	
-		}				
+		}		
+		outputStream.close();
 		
 	}
+	
+	
+	
+	/**
+	 * 返回html代码
+	 * @param html
+	 * @throws IOException
+	 */
+	public void responseHtml(String html) throws IOException {		
+		log.info("返回html代码");
+		
+		if(html==null){
+			return;
+		}
+		
+		status = 200 + " " + httpContext.getStats("200");
+		writeHeader(HttpContext.getInstance().getType("html"), status);	
+		outputStream.write(html.getBytes());
+	
+	}
+	
+	
 	
 	
 
@@ -87,7 +110,7 @@ public class HttpResponse implements Response {
 			writeFile(new File(pathname + "/404.html"));
 		}
 		  
-		outputStream.close();
+	
 	}
 
 	public void writeFile(File file) {
@@ -96,10 +119,7 @@ public class HttpResponse implements Response {
 			fis = new FileInputStream(file);
 			FileToByte fby = new FileToByte();
 			outputStream.write(fby.file2buf(file));
-
-			
 			log.info("文件输出完毕");
-
 		}
 		catch (Exception e) {
 			log.error("写文件出错{}", e);

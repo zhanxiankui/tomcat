@@ -43,7 +43,7 @@ public class HttpContext {
 	}
 
 	public String getType(String key) {
-		return p.getProperty(key).trim();
+		return p.getProperty(key);
 	}
 
 	public String getStats(String key) {

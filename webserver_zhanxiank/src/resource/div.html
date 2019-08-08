@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style type="text/css">
+        .gvs
+        {
+            width:30%;
+            background-color:#cccccc;
+        }
+
+    </style>
+</head>
+<body>
+
+
+        <table id="files" border="0" width="80%">
+                <tr>
+                  <th class="gvs">上一级目录 </th>
+                  <th class="gvs">大小</th>
+                  <th class="gvs">修改日期</th>
+                </tr>
+
+
+                <tr>
+                  <td>
+                        <a  href="javascript:void(0);" id="aq"   onclick="getFils()">  filees</a>
+                  </td>
+
+                  <td>$100</td>
+                  <td>$100</td>
+                </tr>
+
+
+                <tr>
+                  <td>February</td>
+                  <td>$80</td>
+                  <td>$100</td>
+                </tr>
+
+              </table>
+
+
+
+              <a href="dddd.h" onclick='aclick(this)'>测试1</a>
+              <a href="dddd2.h" onclick='aclick(this)'>测试2</a>
+
+
+              <a href="dddd3.h" onclick='getUrl(this)'>测试1</a>
+              <a href="dddd6.h" onclick='getUrl(this)'>测试2</a>
+
+
+              <script>
+               
+
+ function getUrl(e) {
+    e = e || event;
+    var target = e.target || e.srcElement,
+        href;
+    if (target.tagName === 'A') {
+        href = target.href;
+        alert(href);
+    }
+}
+
+               function aclick(self){
+                  alert(self.href);
+                  }
+
+
+                    function getFils(){
+                     
+                       debugger
+
+
+
+                
+                       // window.location.href=url;
+               
+                    }
+             </script>               
+    
+</body>
+</html>

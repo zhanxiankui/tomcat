@@ -1,5 +1,6 @@
 package com.commons.study.webserver.server;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -12,8 +13,7 @@ import com.commons.study.webserver.action.ActionShowFile;
 import com.commons.study.webserver.entity.HttpContext;
 import com.commons.study.webserver.net.HttpRequest;
 import com.commons.study.webserver.net.HttpResponse;
-
-
+import com.commons.study.webserver.util.FileUtil;
 
 /**
  *  服务器任务处理类，是多线程类型。
@@ -39,44 +39,47 @@ public class HttpServer implements Callable<String> {
 			InputStream inputStream = socket.getInputStream();
 			OutputStream outputStream = socket.getOutputStream();
 			HttpRequest req = new HttpRequest(inputStream);
-            String url=req.getRequestURL();
-            
-			if ( url!= null) {
+			String url = req.getRequestURL();
+
+			if (url != null) {
 				HttpResponse response = new HttpResponse(outputStream);
-				
-				String type=req.getContentType()==null ? "html":req.getContentType();
+
+				String type = req.getContentType() == null ? "html" : req.getContentType();
 				String contentType = HttpContext.getInstance().getType(type);
-				if (contentType == null||contentType.equals("")) {
+				if (contentType == null || contentType.equals("")) {
 					contentType = "text/plain";
 				}
-	
-				if(!"/files".equals(url))
+
+				if (!"/files".equals(url)) //加载静态资源
 				{
 					response.setContentType(req.getContentType());
 					response.setHeader("Content-Type", contentType);
 					response.getStaticResource(contentType, req.getResource());
-				}else{                //文件系统的展示
-				
-					if(req.getParameter("path").length()<=3){
-					contentType="text/html; Charset=UTF-8";
+				}
+				else { //文件系统的展示
+
+					ActionShowFile showfile = new ActionShowFile();
+					String cmd = req.getParameter("path");
+
+					contentType = "text/html; Charset=UTF-8";
 					response.setContentType(req.getContentType());
 					response.setHeader("Content-Type", contentType);
-					response.getStaticResource(contentType, "file.html");
-					}  else{
-						
-						ActionShowFile showfile=new ActionShowFile();
-					    showfile.show(req, response);
+
+					if (cmd != null && cmd.length() <= 3) {
+						File file = new File(HttpContext.webdir + "/" + "file.html");
+						String html = FileUtil.fileToString(file);
+						html = html.replace("replacesdiv", FileUtil.getDivHtml(cmd));
+						response.responseHtml(html);
 					}
-				
-				     
+					else {
+						showfile.show(req, response);
+					}
+
 				}
-		
-				
-				
+
+				outputStream.close();
+
 			}
-			
-			
-			
 
 		}
 		catch (Exception e) {

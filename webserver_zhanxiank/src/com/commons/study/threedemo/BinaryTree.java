@@ -5,9 +5,6 @@ import java.util.Queue;
 
 import org.junit.Test;
 
-
-
-
 /**
  *  二叉树类。定义了二叉树的数据结构，以及二叉树的构造，取第n层结点等操作
  * <p>Copyright: Copyright (c) 2019</p>
@@ -141,7 +138,6 @@ public class BinaryTree {
 						break;
 					}
 					sb.append(getValue(temp));
-
 				}
 
 				if (temp.left != null) {
@@ -162,11 +158,5 @@ public class BinaryTree {
 		return sb.toString();
 
 	}
-	
-	
 
 }
-
-
-
-

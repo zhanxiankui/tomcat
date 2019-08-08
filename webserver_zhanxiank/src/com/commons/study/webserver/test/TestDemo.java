@@ -73,12 +73,7 @@ public class TestDemo {
 	@Test
 	public void test1() {
 		
-	   ArrayList<MyFile>  list= FileUtil.getSameDirFils("D:/succezIDE/gitpose");
-	   
-	   for(MyFile f:list){
-		   System.out.println(f.getFileName()+"  "+f.getPath()+"  "+f.getParentdrenDir());
-	   }
-		
+
 	}
 	
 	

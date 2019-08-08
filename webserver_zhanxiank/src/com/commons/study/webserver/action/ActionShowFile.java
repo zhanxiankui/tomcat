@@ -13,9 +13,6 @@ import com.commons.study.webserver.net.Request;
 import com.commons.study.webserver.net.Response;
 import com.commons.study.webserver.util.FileUtil;
 
-
-
-
 /**
  * 文件展示
  * <p>Copyright: Copyright (c) 2019</p>
@@ -24,45 +21,31 @@ import com.commons.study.webserver.util.FileUtil;
  * @createdate 2019年8月6日
  */
 public class ActionShowFile {
-	
-	static final Logger log = LoggerFactory.getLogger( ActionShowFile.class);
-	
-	
-	
-	
 
-	public void show(Request req,HttpResponse res) {
-       if(req==null||res==null){
-    	   return;
-       }
-		
-       String cmd=req.getParameter("path");
-       if(cmd!=null){
-    	   
-    	ArrayList<String> jsonlist=new ArrayList<String>();
-    	
-    	   ArrayList<MyFile> list=FileUtil.getDirFils(cmd);
-    	   for(MyFile file: list){	   
-    		  String jsonfile=file.toString();   
-    		  jsonlist.add(jsonfile);	  
-    	   }   
-    	   
-    	   try {
-			res.responseJson(jsonlist);
+	static final Logger log = LoggerFactory.getLogger(ActionShowFile.class);
+
+	public void show(Request req, HttpResponse res) {
+		if (req == null || res == null) {
+			return;
 		}
-		catch (IOException e) {
-			
+
+		String cmd = req.getParameter("path");
+		if (cmd.indexOf(".") != -1) {
+			return; //是文件
 		}
-    	   
-    	   
-       }
-       
-     
-		
-		
+
+		if (cmd != null) {
+
+			try {
+				res.responseHtml(FileUtil.getDivHtml(cmd));
+
+			}
+			catch (IOException e) {
+
+			}
+
+		}
+
 	}
-	
-	
-	
 
 }

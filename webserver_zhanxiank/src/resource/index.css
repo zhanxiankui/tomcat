@@ -1,0 +1,36 @@
+
+* { padding: 0; margin: 0; list-style: none; }
+
+/********************************************/
+
+.banner { width: 1920px; height: 500px; overflow: hidden; position: relative; margin-left: auto; margin-right: auto; }
+
+.banner .img {position: absolute; left: 0px; top: 0; } /*图片样式*/
+
+.banner .img li { float: left; } /*图片样式*/
+
+.banner .img img { width: 550px; }
+
+/*/ 小圆圈 /*/
+
+.banner .num { position: absolute; width: 100%; bottom: 50px; left: 0; text-align: center; font-size: 0px;; }/*bottom 可以调整小圈圈高度 */
+
+.banner .num li { width: 10px; height: 10px; background: #888; border-radius: 50%; display: inline-block; margin: 0 3px; cursor: pointer; }
+
+.banner .num li.on { background: #F60; }
+
+/*/ 按钮 /*/
+
+.banner .btn { width: 30px; height: 50px; background: rgba(0,0,0,0.5); position: absolute; top: 50%; margin-top: -25px; cursor: pointer; text-align: center; line-height: 50px; color: #fff; font-size: 40px; font-family: "宋体"; display: none; }
+
+.banner:hover .btn { display: block; }
+
+.banner .btn_l { left: 0; }
+
+.banner .btn_r { right: 0; }
+
+/* 修改输出屏大小 */
+
+#ban1 .banner { width: 100%px; height:600px; margin: 0 auto; border: 0px solid #000; }
+
+#ban1 .banner .img img { width: 1920px; height: 600px; /* 修改图片大小 */

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+    <a  href="javascript:void(0);" id="aq"   onclick="getFils('https://www.baidu.com')"> 上一级目录 </a>
+    <div id="show">
+
+
+    </div>
+
+
+    <script>
+     function getFils(url){
+      
+        debugger
+        getDatas()
+        // window.location.href=url;
+
+     }
+
+
+    
+     function creatShow(json){
+      
+        var json=JSON.parse(json);
+
+     }
+
+   
+    
+  function getDatas(){
+
+            var ajax = new XMLHttpRequest();
+            // 第二步： 设置状态监听函数
+
+            /*
+
+            ajax.onreadystatechange = function(){
+                console.log(ajax.readyState);
+                console.log(ajax.status);
+                // 第五步：在监听函数中，判断readyState=4 && status=200表示请求成功
+                if(ajax.readyState==4 && ajax.status==200){
+                    // 第六步： 使用responseText、responseXML接受响应数据，并使用原生JS操作DOM进行显示
+                    console.log(ajax.responseText);
+                    console.log(ajax.responseXML);// 返回不是XML，显示null
+                    console.log(JSON.parse(ajax.responseText));
+                    console.log(eval("("+ajax.responseText+")"));
+
+                    creatShow(ajax.responseText)
+                }
+            }
+
+  */
+        
+            // ajax 请求成功之后的回调函数
+  ajax.onreadystatechange = function () {
+    // readyState=4表示接受响应完毕
+    if (ajax.readyState == ("number" == typeof XMLHttpRequest.DONE ? XMLHttpRequest.DONE : 4)) {
+      if (200 == ajax.status) { // 判断状态码
+        var response = ajax.response || ajax.responseText || {}; // 获取返回值
+        // if define success callback, call it, if response is string, convert it to json objcet
+        console.log(response);
+        alert(response);
+        debugger
+        option.success && option.success(response); // 调用回调函数处理返回数据
+        // 可以判断返回数据类型，对数据进行JSON解析或者XML解析
+        // option.success && option.success('string' == typeof response ? JSON.parse(response) : response);
+      } 
+    }
+  };
+            // 第三步： open一个链接
+            ajax.open("GET","http://localhost:8089/files?path=D://succezIDE",true);//true异步请求，false同步
+
+            // ajax.setRequestHeader && ajax.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
+            
+            // 第四步： send一个请求。 可以发送对象和字符串，不需要传递数据发送null
+            ajax.send(null);
+
+            debugger
+
+
+     }
+     
+
+    
+    </script>
+
+</body>
+</html>
+

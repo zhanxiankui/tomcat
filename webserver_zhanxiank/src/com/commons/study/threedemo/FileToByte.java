@@ -24,35 +24,27 @@ public class FileToByte {
 		byte[] end;
 
 		if (fobj != null && fobj.exists()) {
-
 			fis = new FileInputStream(fobj);
 			try {
 				bos = new ByteArrayOutputStream(1024);
 				try {
-
 					byte[] bt = new byte[1024];
 					int len = -1;
 					while ((len = fis.read(bt)) != -1) {
 						bos.write(bt, 0, len);
-
 					}
-
 					end = bos.toByteArray();
 
 				}
 				finally {
 					bos.close();
 				}
-
 			}
 			finally {
-
 				fis.close();
-
 			}
 
 			return end;
-
 		}
 
 		return null;

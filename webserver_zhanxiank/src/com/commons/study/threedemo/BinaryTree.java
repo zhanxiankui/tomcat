@@ -12,7 +12,7 @@ import org.junit.Test;
  * @author zhanxk
  * @createdate 2019年8月1日
  */
-class TNode {
+  class TNode {
 	String value;
 
 	TNode left, right;
@@ -130,9 +130,7 @@ public class BinaryTree {
 			leavenum = queue.size(); //上一层结点个数
 			while (leavenum > 0) {
 				leavenum--;
-
 				temp = queue.remove();
-
 				if (count > level - 1) {
 					if (count > level) {
 						break;
@@ -142,16 +140,12 @@ public class BinaryTree {
 
 				if (temp.left != null) {
 					queue.add(temp.left);
-
 				}
 
 				if (temp.right != null) {
 					queue.add(temp.right);
-
 				}
-
 			}
-
 			count++;
 		}
 

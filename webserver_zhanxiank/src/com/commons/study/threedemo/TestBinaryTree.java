@@ -1,6 +1,10 @@
 package com.commons.study.threedemo;
 
+import org.junit.Assert;
 import org.junit.Test;
+
+import com.commons.study.threedemo.BinaryTree;
+import com.commons.study.threedemo.TNode;
 
 /**
  * 这是是测试二叉树的类，二叉树的功能比较多，junit测试写的麻烦，故写一个测试类。
@@ -12,9 +16,8 @@ import org.junit.Test;
 
 public class TestBinaryTree {
 
-	
 	@Test
-	public  void test() {
+	public void test() {
 
 		BinaryTree bt = new BinaryTree("A");
 
@@ -25,9 +28,29 @@ public class TestBinaryTree {
 		TNode t5 = bt.add(t2, "C", true);
 		TNode t6 = bt.add(t2, "F", false);
 
-		System.out.println("第一层-----" + bt.treeLevel(bt.getRoot(), 2));		
-		System.out.println("第二层-----" + bt.treeLevel(bt.getRoot(), 3));
-
+		Assert.assertEquals("A", bt.treeLevel(bt.getRoot(), 1));
+		Assert.assertEquals("BD", bt.treeLevel(bt.getRoot(), 2));
+		Assert.assertEquals("GHCF", bt.treeLevel(bt.getRoot(), 3));
 	}
 
+	@Test
+	public void test1() { //构造第二棵书
+
+		BinaryTree bt = new BinaryTree("A");
+
+		TNode t1 = bt.add(bt.getRoot(), "B", true);
+		TNode t2 = bt.add(bt.getRoot(), "C", false);
+		TNode t3 = bt.add(t1, "D", true);
+		TNode t4 = bt.add(t1, "E", false);
+		TNode t5 = bt.add(t2, "F", true);
+		TNode t6 = bt.add(t2, "G", false);
+		TNode t7 = bt.add(t3, "H", true);
+		TNode t8 = bt.add(t3, "J", false);
+
+		Assert.assertEquals("A", bt.treeLevel(bt.getRoot(), 1));
+		Assert.assertEquals("BC", bt.treeLevel(bt.getRoot(), 2));
+		Assert.assertEquals("DEFG", bt.treeLevel(bt.getRoot(), 3));
+		Assert.assertEquals("HJ", bt.treeLevel(bt.getRoot(), 4));
+
+	}
 }

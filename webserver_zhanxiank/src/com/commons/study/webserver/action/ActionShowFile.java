@@ -24,21 +24,24 @@ public class ActionShowFile {
 
 	static final Logger log = LoggerFactory.getLogger(ActionShowFile.class);
 
+	
+	/**
+	 * 查询界面
+	 * @param req
+	 * @param res
+	 */
 	public void show(Request req, HttpResponse res) {
 		if (req == null || res == null) {
 			return;
 		}
 
 		String cmd = req.getParameter("path");
-		if (cmd.indexOf(".") != -1) {
-			return; //是文件
-		}
+		String parent=req.getParameter("mark");
 
 		if (cmd != null) {
 
 			try {
-				res.responseHtml(FileUtil.getDivHtml(cmd));
-
+				res.responseHtml(FileUtil.getDivHtml(cmd,parent));
 			}
 			catch (IOException e) {
 

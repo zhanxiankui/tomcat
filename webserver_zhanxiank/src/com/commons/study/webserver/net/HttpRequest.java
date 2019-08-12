@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -61,7 +62,8 @@ public class HttpRequest implements Request {
 			if (line != null && line.length() > 0) {
 				String[] temp = line.split(" ");
 				this.requestMethod = temp[0];
-				this.url = temp[1];
+				this.url =URLDecoder.decode(temp[1], "UTF-8") ;   //前端进行了utf-8编码，这里解码防止乱码。
+				
 				this.protocol = temp[2];
 				int index = this.url.indexOf("?");
 
@@ -192,6 +194,9 @@ public class HttpRequest implements Request {
 	@Override
 	public String getParameter(String name) {
 		// TODO Auto-generated method stub
+		if(parametes.get(name)==null)
+			return null;
+		
 		return (String) parametes.get(name).get(0);
 	}
 

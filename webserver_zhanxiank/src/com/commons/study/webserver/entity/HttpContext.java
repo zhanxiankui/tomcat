@@ -8,6 +8,8 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.core.util.StatusListenerConfigHelper;
+
 
 
 /**
@@ -30,6 +32,8 @@ public class HttpContext {
 
 	//资源存放的路径
 	public static String webdir = HttpContext.class.getClassLoader().getResource("resource").getPath();
+	
+	public static final int  threadNums=6;   //线程池的线程数量。
 
 	private HttpContext() {
 		loadPropeyty();

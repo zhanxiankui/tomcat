@@ -76,7 +76,6 @@ public class HttpResponse implements Response {
 		if(html==null){
 			return;
 		}
-		
 		status = 200 + " " + httpContext.getStats("200");
 		writeHeader(HttpContext.getInstance().getType("html"), status);	
 		outputStream.write(html.getBytes());
@@ -84,6 +83,28 @@ public class HttpResponse implements Response {
 	}
 	
 	
+	/**
+	 * 下载文件
+	 * @param contentType
+	 * @param f
+	 * @throws Exception 
+	 */
+	public void responseFile(String contentType, File f) throws Exception {
+		status = 200 + " " + httpContext.getStats("200");
+
+		String first = "HTTP/1.1 " + status + "\r\n";
+		String responseHeader = "Content-Type:" + contentType + "\r\n";
+		String fmark = "Content-Disposition: attachment;filename=" + f.getName() + "\r\n";
+
+		outputStream.write(first.getBytes());
+		outputStream.write("accept-ranges: bytes \r\n".getBytes());
+		outputStream.write(responseHeader.getBytes());
+		outputStream.write(fmark.getBytes()); //下载文件的头部设置。
+		outputStream.write("\r\n".getBytes());
+		outputStream.write(new FileToByte().file2buf(f));
+		outputStream.flush();
+
+	}
 	
 	
 

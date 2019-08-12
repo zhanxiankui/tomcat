@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,50 +8,64 @@
     <title>Document</title>
 
     <style type="text/css">
-      .gvs
-      {
-          width:30%;
-          background-color:#cccccc;
-      }
-  </style>
+        .gvs {
+            width: 30%;
+            background-color: #cccccc;
+        }
+    </style>
 </head>
+
 <body>
-    
-    <div id="show">
-          replacesdiv
+
+    <div id="show" style="margin-left:9%">
+        replacesdiv
     </div>
     <script>
+        function getDatas(url) {
+            // alert(url);
 
-  function getDatas(url){
-            alert(url);
-            
             //创建 ajax对象
-            var ajax = new XMLHttpRequest();
+            var ajax = null;
+
+            if (window.XMLHttpRequest) {
+                //  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+               ajax = new XMLHttpRequest();
+            } else {
+                // IE6, IE5 浏览器执行代码
+                ajax = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
             // 第二步： 设置状态监听函数
-            ajax.onreadystatechange = function(){
+            ajax.onreadystatechange = function () {
                 console.log(ajax.readyState);
                 console.log(ajax.status);
                 // 第五步：在监听函数中，判断readyState=4 && status=200表示请求成功
-                if(ajax.readyState==4 && ajax.status==200){
+                if (ajax.readyState == 4 && ajax.status == 200) {
                     // 第六步： 使用responseText、responseXML接受响应数据，并使用原生JS操作DOM进行显示
- 
+
                     var response = ajax.response || ajax.responseText || {}; // 获取返回值
-                    var dom=document.getElementById("show")
-                    dom.innerHTML=response;
-            
+                    var dom = document.getElementById("show")
+                    dom.innerHTML = response;
+
+
+
                 }
-            }         
+            }
+
+            url = encodeURI("files?path="+url);
 
             // 第三步： open一个链接
-            ajax.open("GET","files?path="+url,true);//true异步请求，false同步
+            ajax.open("post", url, true); //true异步请求，false同步
             // ajax.setRequestHeader && ajax.setRequestHeader('Content-Type', 'application/json;charset=utf-8');   
             // 第四步： send一个请求。 可以发送对象和字符串，不需要传递数据发送null
+
+            var doma= document.getElementById("pa"); //这是判断上一级的标志
+            
             ajax.send(null);
 
-     }
-         
+        }
     </script>
 
 </body>
-</html>
 
+</html>

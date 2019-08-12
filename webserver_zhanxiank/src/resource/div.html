@@ -17,32 +17,37 @@
 </head>
 <body>
 
+ 
+  <div style="margin-left: 20%">
 
-        <table id="files" border="0" width="80%">
-                <tr>
-                  <th class="gvs">上一级目录 </th>
-                  <th class="gvs">大小</th>
-                  <th class="gvs">修改日期</th>
-                </tr>
-
-
-                <tr>
-                  <td>
-                        <a  href="javascript:void(0);" id="aq"   onclick="getFils()">  filees</a>
-                  </td>
-
-                  <td>$100</td>
-                  <td>$100</td>
-                </tr>
+    <table id="files" border="0" width="80%">
+      <tr>
+        <th class="gvs">上一级目录 </th>
+        <th class="gvs">大小</th>
+        <th class="gvs">修改日期</th>
+      </tr>
 
 
-                <tr>
-                  <td>February</td>
-                  <td>$80</td>
-                  <td>$100</td>
-                </tr>
+      <tr>
+        <td>
+              <a  href="javascript:void(0);" id="aq"   onclick="getFils(this)">  filees</a>
+        </td>
 
-              </table>
+        <td>$100</td>
+        <td>$100</td>
+      </tr>
+
+
+      <tr>
+        <td>February</td>
+        <td>$80</td>
+        <td>$100</td>
+      </tr>
+
+    </table>
+
+  </div>
+       
 
 
 
@@ -57,26 +62,12 @@
               <script>
                
 
- function getUrl(e) {
-    e = e || event;
-    var target = e.target || e.srcElement,
-        href;
-    if (target.tagName === 'A') {
-        href = target.href;
-        alert(href);
-    }
-}
 
-               function aclick(self){
-                  alert(self.href);
-                  }
+         
 
-
-                    function getFils(){
-                     
-                       debugger
-
-
+                    function getFils(self){
+                    
+                    var href=self.href;
 
                 
                        // window.location.href=url;

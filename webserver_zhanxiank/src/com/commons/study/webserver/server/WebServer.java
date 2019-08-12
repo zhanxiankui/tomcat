@@ -15,6 +15,8 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.commons.study.webserver.entity.HttpContext;
+
 
 /**
  * web 服务器
@@ -31,7 +33,7 @@ public class WebServer {
 
 	static final Logger log = LoggerFactory.getLogger(WebServer.class);
 
-	public static void main(String[] args) throws InterruptedException, ExecutionException {
+	public static void main(String[] args) throws InterruptedException, ExecutionException, IOException {
 
 		WebServer webServer = new WebServer();
 		webServer.startServer();
@@ -40,23 +42,23 @@ public class WebServer {
 	
 	
 
-	private void startServer() throws InterruptedException, ExecutionException {
+	private void startServer() throws InterruptedException, ExecutionException, IOException {
 		ServerSocket serverSocket = null;
 		ExecutorService threadPool = null;
 		try {
 			log.info("服务器启动成功");
 			serverSocket = new ServerSocket(port, 1, InetAddress.getByName("127.0.0.1"));
-			threadPool = Executors.newFixedThreadPool(12);
+			threadPool = Executors.newFixedThreadPool(HttpContext.threadNums);
 			while (!isShutDown) {
 				log.info("等待客户端连接 :");
 				Socket socket  = serverSocket.accept(); //会阻塞在这里		
 				Future<String> future = threadPool.submit(new HttpServer(socket));
 				log.debug("线程池是否关闭{}", threadPool.isShutdown());
 			}
-
 		}
 		catch (Exception e) {
 			log.error("服务器异常：", e);
+			serverSocket.close();
 		}
 
 	}

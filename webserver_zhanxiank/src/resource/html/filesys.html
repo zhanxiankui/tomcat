@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    
+   <script type="text/javascript"  data-main="../js/build/main"   src="../ts/require.js"></script>
+    <!-- <script src="../ts/util.js"></script> -->
+    <!-- <script src="../ts/tree.js"></script> -->
+</head>
+<body>
+
+     <div id="head" style="width:100%; height:13%;  text-indent:6%;  border:1px solid #000; background: dodgerblue">文件管理系统</div>
+     <div id="left" style="width:20%; height: 86%; border: 1px solid #000; float: left;" >树</div> 
+     <div id="right" style="width:80%; height:86%; border:1px solid #000">目录</div>
+
+
+<script>
+
+require(["tree"],function(tree){
+
+    var t=new tree("id0",0);
+    t.init();  
+
+})
+
+
+
+
+</script>
+    
+</body>
+</html>

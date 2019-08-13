@@ -10,6 +10,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import com.commons.study.webserver.action.ActionShowFile;
 import com.commons.study.webserver.entity.MyFile;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ch.qos.logback.core.LogbackException;
 
@@ -64,6 +68,7 @@ public class FileUtil {
 		return filelist;
 	}
 
+	
 	public static String fileToString(File file) {
 		String str = "";
 		try {
@@ -92,6 +97,27 @@ public class FileUtil {
 		}
 		return flg;
 	}
+	
+	
+	
+	public static String getJsonInfo(File f) throws JsonProcessingException {
+		
+		if(f==null){
+			return null;
+		}
+		String[] t=f.getPath().split("/");
+		int num=t.length;
+	    
+	    ObjectMapper mapper=new ObjectMapper();
+	    Map<String, String> fMap=new HashMap<>();
+	    fMap.put("name", f.getName());
+	    fMap.put("isdir", f.isFile()+"");
+	    fMap.put("leave", String.valueOf(num));
+		
+		return mapper.writeValueAsString(fMap)	;
+	}
+	
+	
 
 	public static String getDivHtml(String cmd,String parent) {
 

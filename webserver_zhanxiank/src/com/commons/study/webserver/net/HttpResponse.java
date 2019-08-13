@@ -48,18 +48,12 @@ public class HttpResponse implements Response {
 	 * 返回json字符串
 	 * @throws IOException 
 	 */
-	public void responseJson(List<String> list) throws IOException{
+	public void responseJson(String data) throws IOException{
 		log.info("返回json形式的字符串");
-			if(list==null||list.size()<0){
-			return;
-		}
-	
 		status = 200 + " " + httpContext.getStats("200");
 		writeHeader(HttpContext.getInstance().getType("json"), status);	
-		for(String file:list){
-			outputStream.write(file.getBytes());	
-		}		
-		outputStream.close();
+		outputStream.write(data.getBytes());	
+		outputStream.flush();
 		
 	}
 	
@@ -140,6 +134,7 @@ public class HttpResponse implements Response {
 			fis = new FileInputStream(file);
 			FileToByte fby = new FileToByte();
 			outputStream.write(fby.file2buf(file));
+			outputStream.flush();
 			log.info("文件输出完毕");
 		}
 		catch (Exception e) {

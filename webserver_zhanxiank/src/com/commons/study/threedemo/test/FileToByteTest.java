@@ -28,18 +28,10 @@ public class FileToByteTest {
 		Assert.assertNull(new FileToByte().file2buf(new File("D:/document"))); //测试目录。
 
 		Assert.assertEquals(null, new FileToByte().file2buf(null));  //测试为空。
+		
+		Assert.assertEquals(null, new FileToByte().file2buf(getFiles("a.txt")));
 	}
 
-	
-	
-	@Test
-	public void test1() throws Exception {   //文件不存在
-			
-		Assert.assertEquals(null, new FileToByte().file2buf(getFiles("a.txt")));			
-	}
-	
-	
-	
 	
 	
 	public File getFiles(String fileName) {

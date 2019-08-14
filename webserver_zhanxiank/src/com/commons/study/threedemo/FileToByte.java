@@ -34,7 +34,6 @@ public class FileToByte {
 						bos.write(bt, 0, len);
 					}
 					end = bos.toByteArray();
-
 				}
 				finally {
 					bos.close();

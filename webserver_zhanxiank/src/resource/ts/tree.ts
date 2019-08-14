@@ -62,10 +62,7 @@ class tree {
             return;
         }
 
-       // 添加标题
-       var itemdom= document.createElement("div")
-       var arrow = '<span class="to__dropdownList" ><i onclick="dropClick(this)"><svg t="1550632829702" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1783" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%"><defs><style type="text/css"></style></defs><path d="M959.52557 254.29773 511.674589 702.334953 63.824631 254.29773Z" p-id="1784"></path></svg></i></span>'
-
+ 
        
 
         var json = JSON.parse(data);
@@ -74,11 +71,17 @@ class tree {
             let name = j.name;
             let isdir = j.isdir;
             let leave = j.leave;
+          
+                  // 添加标题
+             var itemdom= document.createElement("div")
+            var arrow = '<span class="to__dropdownList" ><i onclick="dropClick(this)"><svg t="1550632829702" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1783" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%"><defs><style type="text/css"></style></defs><path d="M959.52557 254.29773 511.674589 702.334953 63.824631 254.29773Z" p-id="1784"></path></svg></i></span>'
 
-            itemdom.innerHTML = '<div class="to__item level-' + i+ '">' + arrow + '<span onclick="domClick(this)"><input type="checkbox" name="cName" value="' +name+ '" onclick="checkboxClick(this)" /><div class="to__name">' +name+ '</div></span></div>'
-            this.getDom().appendChild(itemdom);
+            itemdom.innerHTML = '<div class="to__item level-' + leave+ '">' + arrow + '<span onclick="domClick(this)"><input type="checkbox" name="cName" value="' +name+ '" onclick="checkboxClick(this)" /><div class="to__name">' +name+ '</div></span></div>'
+
        
         }
+
+         this.getDom().appendChild(itemdom);
         // let item=new Item();
 
 

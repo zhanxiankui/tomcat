@@ -25,8 +25,7 @@ public class IntToHex {
 		boolean b=false;
 		if(num<0)
 		{
-			 b=true;
-			 num=Math.abs(num);
+			return null;   //不处理负数。
 		}
           
 		StringBuilder sb = new StringBuilder();
@@ -40,7 +39,7 @@ public class IntToHex {
 			temp = num / targ;
 		}
 		
-	   return   b?"-"+sb.reverse().toString(): sb.reverse().toString();
+	   return   sb.reverse().toString();
 		
 		
 	}

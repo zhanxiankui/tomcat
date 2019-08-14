@@ -1,4 +1,4 @@
-package com.commons.study.threedemo;
+package com.commons.study.threedemo.test;
 
 import org.junit.Assert;
 import org.junit.Test;

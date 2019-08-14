@@ -57,7 +57,7 @@ public class HttpServer implements Callable<String> {
 					response.setHeader("Content-Type", contentType);
 					response.getStaticResource(contentType, req.getResource());
 				}
-				else if("files".equals(url)) { //文件系统的展示
+				else if("/files".equals(url)) { //文件系统的展示
 
 					ActionShowFile showfile = new ActionShowFile();
 					String cmd = req.getParameter("path");

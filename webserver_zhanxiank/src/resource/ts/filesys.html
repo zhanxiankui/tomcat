@@ -1,32 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 
-    <link rel="stylesheet" href="../ts/tree.css">
+    <link rel="stylesheet" href="../filetree.css">
     <script src="../ts/tree.js"></script>
 </head>
+
 <body>
 
+    <!--
      <div id="head" style="width:100%; height:13%;  text-indent:6%;  border:1px solid #000; background: dodgerblue">文件管理系统</div>
-     <div id="left" style="width:20%; height: 86%; border: 1px solid #000; float: left;" >树</div> 
-     <div id="right" style="width:80%; height:86%; border:1px solid #000">目录</div>
-
-
-<script>
-
-
-
-window.onload=function(){
-    var t=new tree("id0",0);
-    debugger
-  t.init("/show.do?path=d:/","post",null); 
-}
-
-</script>
+     <div id="left" style="width:40%; height: 86%; border: 1px solid #000; float: left;" >树</div> 
+     <div id="right" style="width:60%; height:86%;  border:1px solid #000;">目录</div>
     
+    -->
+
+    <div id="top" class="topDiv">Succez文件管理系统</div>
+    <div id="left" style="width: 20%;height:90%;border-right:2px solid grey;"></div>
+    <div id="right" class="rightDiv">
+        <div style="height: 10%;border-bottom:2px solid grey;"> <input id="button1" class="button" type="button"
+                value="保存"></input> <input id="button2" class="button" type="button" value="下载"></input> </div>
+        <div style="height:89%;">
+            <textarea id="txt" class="editTxt"></textarea> </div>
+    </div>
+
+    <script>
+        window.onload = function () {
+            var t = new tree("id0", 0);
+            t.init("/show.do?path=d:/", "post", null);
+        }
+    </script>
+
 </body>
+
 </html>

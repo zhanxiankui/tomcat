@@ -27,57 +27,70 @@ a {
   color: #172c45;
   text-decoration: none;
 }
+
 a:hover {
   color: #cd0200;
   text-decoration: underline;
 }
+
 em {
   font-style: normal;
 }
+
 li {
   list-style: none;
 }
+
 img {
   border: 0;
   vertical-align: middle;
 }
+
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
+
 p {
   word-wrap: break-word;
 }
+
 :focus {
   outline: none;
 }
+
 /* index.css */
 html,
 body {
   height: 100%;
 }
+
 body {
   width: 1000px;
   color: #000;
   font-size: 14px;
 }
+
 .to__header .to__addUser {
   margin: 0 auto;
   width: 90%;
   font-size: 20px;
 }
+
 .to__header .to__flow {
   margin: 0 auto;
   padding: 15px 0;
   width: 90%;
   display: block;
 }
+
 .to__header .to__flow .to__flow__item {
   position: relative;
   width: 30%;
   color: #999;
   display: inline-block;
 }
+
 .to__header .to__flow .to__flow__item .to__round {
   margin-right: 12px;
   width: 20px;
@@ -88,15 +101,18 @@ body {
   border-radius: 50%;
   display: inline-block;
 }
+
 .to__header .to__flow .to__flow__item .to__active {
   color: #fff;
   background-color: #175ad8;
   border: 1px solid #175ad8;
 }
+
 .to__header .to__flow .to__flow__item .to__flow__name {
   display: inline-block;
   cursor: pointer;
 }
+
 .to__header .to__flow .to__flow__item::after {
   margin: auto 0;
   content: ">";
@@ -108,19 +124,23 @@ body {
   line-height: 20px;
   font-size: 26px;
 }
+
 .to__header .to__flow .to__flow__item:last-child::after {
   content: "";
 }
+
 .to__block {
   padding-left: 10px;
   text-align: center;
 }
+
 .to__block .to__left,
 .to__block .to__right {
   width: 45%;
   display: inline-block;
   vertical-align: text-top;
 }
+
 .to__block .to__left .to__item,
 .to__block .to__right .to__item {
   margin-left: -100px;
@@ -129,16 +149,19 @@ body {
   line-height: 40px;
   border-bottom: 1px solid #eee;
 }
+
 .to__block .to__left .to__title,
 .to__block .to__right .to__title {
   line-height: 30px;
   text-align: left;
 }
+
 .to__block .to__left .to__title .to__remark,
 .to__block .to__right .to__title .to__remark {
   color: #999;
   display: inline-block;
 }
+
 .to__block .to__left .to__content,
 .to__block .to__right .to__content {
   width: 100%;
@@ -148,6 +171,7 @@ body {
   box-sizing: border-box;
   overflow-y: auto;
 }
+
 .to__block .to__left .to__content .to__search,
 .to__block .to__right .to__content .to__search {
   position: relative;
@@ -155,6 +179,7 @@ body {
   line-height: 30px;
   border-bottom: 1px solid #ccc;
 }
+
 .to__block .to__left .to__content .to__search input,
 .to__block .to__right .to__content .to__search input {
   padding-left: 20px;
@@ -163,6 +188,7 @@ body {
   border: none;
   box-sizing: border-box;
 }
+
 .to__block .to__left .to__content .to__search .to__icon__search,
 .to__block .to__right .to__content .to__search .to__icon__search {
   position: absolute;
@@ -172,6 +198,7 @@ body {
   height: 30px;
   border-left: 1px solid #ccc;
 }
+
 .to__block .to__left .to__content .to__search .to__icon__search svg,
 .to__block .to__right .to__content .to__search .to__icon__search svg {
   margin: auto;
@@ -181,17 +208,21 @@ body {
   left: 0;
   right: 0;
 }
+
 .to__block .to__left {
   position: relative;
   margin-right: 30px;
 }
-.to__block .to__left > div .to_subItem {
+
+.to__block .to__left>div .to_subItem {
   padding-left: 20px;
   display: none;
 }
-.to__block .to__left > div .to_show {
+
+.to__block .to__left>div .to_show {
   display: block;
 }
+
 .to__block .to__left .to__arrow {
   margin: auto 0;
   position: absolute;
@@ -204,15 +235,19 @@ body {
   font-size: 20px;
   transform: translateX(120%);
 }
+
 .to__block .to__left .to__arrow {
   margin-left: -16px;
 }
+
 .to__block .to__left .to__item {
   position: relative;
 }
+
 .to__block .to__left .to__item .to__dropdownList {
   position: relative;
 }
+
 .to__block .to__left .to__item .to__dropdownList i {
   position: absolute;
   top: 0;
@@ -225,13 +260,16 @@ body {
   cursor: pointer;
   transform: rotate(-90deg);
 }
+
 .to__block .to__left .to__item .to__dropdownList i svg {
   position: absolute;
   z-index: 2;
 }
+
 .to__block .to__left .to__item .to__dropdownList {
   transform: rotate(0);
 }
+
 .to__block .to__left .to__item input[type="checkbox"] {
   position: relative;
   margin-right: 6px;
@@ -243,9 +281,11 @@ body {
   min-height: 12px;
   min-width: 12px;
 }
+
 .to__block .to__left .to__item input[type="checkbox"]:checked {
   background: #3190e8;
 }
+
 .to__block .to__left .to__item input[type=checkbox]:checked::after {
   content: '';
   top: 2px;
@@ -262,17 +302,22 @@ body {
   -webkit-transform: rotate(-45deg);
   transform: rotate(-45deg);
 }
-.to__block .to__left .to__item{    /*行内样式  */
+
+.to__block .to__left .to__item {
+  /*行内样式  */
   display: inline-block;
   vertical-align: middle;
   cursor: pointer;
 }
+
 .to__block .to__right {
   position: relative;
 }
+
 .to__block .to__right .to__item {
   position: relative;
 }
+
 .to__block .to__right .to__item .to__close {
   margin: auto 0;
   position: absolute;
@@ -281,19 +326,23 @@ body {
   bottom: 0;
   cursor: pointer;
 }
+
 .to__block .to__right .to__item .to__close i {
   font-size: 20px;
   transform: rotate(45deg);
   font-style: normal;
   display: inline-block;
 }
+
 .to__footer {
   margin-top: 15px;
   text-align: center;
 }
+
 .to__footer .to__btn__group {
   display: inline-block;
 }
+
 .to__footer .to__btn__group .to__btn {
   margin: 0 25px;
   padding: 8px 0;
@@ -301,20 +350,23 @@ body {
   border: 1px solid #999;
   display: inline-block;
 }
+
 .to__footer .to__btn__group .to__btn__primary {
   color: #fff;
   background-color: #175ad8;
 }
 
 
-.icon {     /*   展开的图标样式  */
+.icon {
+  /*   展开的图标样式  */
 
-    vertical-align: middle;
-    border:0;
-    margin-left: 8px;
+  vertical-align: middle;
+  border: 0;
+  margin-left: 8px;
 }
 
-.to_name {    /*行内样式  */
+.to_name {
+  /*行内样式  */
   display: inline-block;
   vertical-align: middle;
   cursor: pointer;
@@ -334,4 +386,41 @@ span {
 
 .to_roate {
   transform: rotate(0);
+}
+
+
+
+
+/*文本编辑框样式*/
+.editTxt {
+  width: 100%;
+  height: 95%;
+  display: block;
+  margin: 0 auto;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 24px;
+  padding: 2px;
+  border: none;
+  outline: none;
+}
+
+/*页面布局左侧div样式*/
+.rightDiv {
+  width: 79%;
+  height: 90%;
+  left: 20%;
+  top: 10%;
+  position: absolute;
+  border-left: 2px solid grey;
+}
+
+/*页面上部div样式*/
+.topDiv {
+  width: 100%;
+  height: 10%;
+  background: #3399ff;
+  color: white;
+  line-height: 350%;
+  text-indent: 20px;
 }

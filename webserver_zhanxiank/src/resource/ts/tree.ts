@@ -84,10 +84,10 @@ class tree {
                 if (className == "to__dropdownList") {
                     this.dropClick(e);
                 }
+                if(txt!=null||txt!=""){
+                              //查看文件
+                }
 
-
-                let dom = <HTMLElement>self.getTargetDom(e);
-                let item = self.allDoms.get(dom);
             }
         }
 
@@ -97,10 +97,13 @@ class tree {
 
     public dropClick(e: any) {  //点击事件。
 
-        let dom = document.getElementById(e.path[3].id);  //li的dom;
+        let id=e.path[3].id;
+        let dom = document.getElementById(id);  //li的dom;
 
-        this.query(e[2].name,"get","ull",function(data){
-
+        this.query("/show.do?path="+e.path[2].title,"get",null,function(data){  //追加结点
+         
+            var item=new Item(id,"","",true,0);
+              item.addTreeItem(id,"",data,dom);
         });
 
         // 切换样式状态
@@ -141,7 +144,7 @@ class Item {
     leave: number;
     isExpend: boolean = false;
 
-
+ 
     constructor(parentid: string, id: string, name: string, isdir: boolean, leave: number) {
         this.parentid = parentid;
         this.id = id;
@@ -159,11 +162,14 @@ class Item {
         if (data == null) {
             return;
         }
-
+          
+        let t=new  tree(null,0);  //使用对象，
         var arry = new Array();
         var json = JSON.parse(data);
         let ulmdom = document.createElement("ul");
-        ulmdom.id = id;
+        ulmdom.id = pid;
+        var num=((JSON.parse(json[0]).leave)-1)*16;
+        ulmdom.style.cssText="margin-left:"+num+"px;";
         var ulhtml = '';
         for (let i = 0; i < json.length; i++) {
 
@@ -175,7 +181,7 @@ class Item {
             var item = new Item(pid, id, name, isdir, leave);
             this.setPath(path); //路径
             arry.push(item);
-            let sp1 = '<span class="to__dropdownList"  name='  +path+ ' > <i onclick="dropClick(this)">  <img src="expend.gif" class="icon"></i></span>';
+            let sp1 = '<span class="to__dropdownList"  title='  +path+ '> <i onclick="dropClick(this)">  <img src="expend.gif" class="icon"></i></span>';
             let sp2 = '<span ><input type="checkbox" name="input" value="' + name + '" onclick="checkboxClick(this)" /> <div class="to_name">' + name + '</div></span>';
             let temp = '<li id="' + leave + name + '">' + sp1 + sp2 + '</li>';
             ulhtml += temp;
@@ -183,16 +189,9 @@ class Item {
 
         ulmdom.innerHTML = ulhtml;
         dom.appendChild(ulmdom);
-
+        t.domClick(); //添加点击事件。
         return arry;
-
     }
-
-
-
-
-
-
 
 
 }

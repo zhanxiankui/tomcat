@@ -59,14 +59,18 @@ var tree = /** @class */ (function () {
                 if (className == "to__dropdownList") {
                     _this.dropClick(e);
                 }
-                var dom = self.getTargetDom(e);
-                var item = self.allDoms.get(dom);
+                if (txt != null || txt != "") {
+                    //查看文件
+                }
             };
         }
     };
     tree.prototype.dropClick = function (e) {
-        var dom = document.getElementById(e.path[3].id); //li的dom;
-        this.query(e[2].name, "get", "ull", function (data) {
+        var id = e.path[3].id;
+        var dom = document.getElementById(id); //li的dom;
+        this.query("/show.do?path=" + e.path[2].title, "get", null, function (data) {
+            var item = new Item(id, "", "", true, 0);
+            item.addTreeItem(id, "", data, dom);
         });
         // 切换样式状态
         if (dom.className.indexOf("to_roate") > -1) {
@@ -104,10 +108,13 @@ var Item = /** @class */ (function () {
         if (data == null) {
             return;
         }
+        var t = new tree(null, 0); //使用对象，
         var arry = new Array();
         var json = JSON.parse(data);
         var ulmdom = document.createElement("ul");
-        ulmdom.id = id;
+        ulmdom.id = pid;
+        var num = (JSON.parse(json[0]).leave) * 9;
+        ulmdom.style.cssText = "margin-left:" + num + "px;";
         var ulhtml = '';
         for (var i = 0; i < json.length; i++) {
             var j = JSON.parse(json[i]);
@@ -118,13 +125,14 @@ var Item = /** @class */ (function () {
             var item = new Item(pid, id, name_1, isdir, leave);
             this.setPath(path); //路径
             arry.push(item);
-            var sp1 = '<span class="to__dropdownList"  name=>' + path + '  <i onclick="dropClick(this)">  <img src="expend.gif" class="icon"></i></span>';
+            var sp1 = '<span class="to__dropdownList"  title=' + path + '> <i onclick="dropClick(this)">  <img src="expend.gif" class="icon"></i></span>';
             var sp2 = '<span ><input type="checkbox" name="input" value="' + name_1 + '" onclick="checkboxClick(this)" /> <div class="to_name">' + name_1 + '</div></span>';
             var temp = '<li id="' + leave + name_1 + '">' + sp1 + sp2 + '</li>';
             ulhtml += temp;
         }
         ulmdom.innerHTML = ulhtml;
         dom.appendChild(ulmdom);
+        t.domClick(); //添加点击事件。
         return arry;
     };
     return Item;

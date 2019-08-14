@@ -6,7 +6,8 @@ var tree = /** @class */ (function () {
     tree.prototype.init = function (url, way, path) {
         var _this = this;
         this.query(url, way, path, function (data) {
-            _this.addRootItem(data);
+            _this.addRootItem(data, _this.getDom());
+            _this.domClick();
         });
     };
     tree.prototype.getDom = function () {
@@ -29,33 +30,66 @@ var tree = /** @class */ (function () {
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 var data_1 = xhr.response || xhr.responseText;
-                alert(data_1);
+                // alert(data);
                 result(data_1); //处理数据的函数
             }
         };
     };
-    tree.prototype.addRootItem = function (data) {
-        if (data == null) {
-            return;
+    //第一层结点。
+    tree.prototype.addRootItem = function (data, dom) {
+        var item = new Item("-1", "0", "root", false, 0);
+        item.addTreeItem("-1", "0", data, this.getDom());
+    };
+    tree.prototype.domClick = function () {
+        var _this = this;
+        // 选中子元素所有input框
+        var dom = document.getElementsByTagName("span");
+        for (var i = 0; i < dom.length; i++) {
+            var self = this;
+            dom[i].onclick = function (e) {
+                var subItem = e.path;
+                var obj = self;
+                if (subItem == null) {
+                    return;
+                }
+                var name = subItem[0].neme;
+                var value = subItem[0].value; //选择输入框
+                var txt = subItem[0].innerHTML; //点击文件名
+                var className = subItem[2].className; //展开和伸缩。
+                if (className == "to__dropdownList") {
+                    _this.dropClick(e);
+                }
+                var dom = self.getTargetDom(e);
+                var item = self.allDoms.get(dom);
+            };
         }
-        // 添加标题
-        var itemdom = document.createElement("div");
-        var arrow = '<span class="to__dropdownList" ><i onclick="dropClick(this)"><svg t="1550632829702" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1783" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%"><defs><style type="text/css"></style></defs><path d="M959.52557 254.29773 511.674589 702.334953 63.824631 254.29773Z" p-id="1784"></path></svg></i></span>';
-        var json = JSON.parse(data);
-        for (var i = 0; i < data.length; i++) {
-            var j = JSON.parse(json[i]);
-            var name_1 = j.name;
-            var isdir = j.isdir;
-            var leave = j.leave;
-            itemdom.innerHTML = '<div class="to__item level-' + i + '">' + arrow + '<span onclick="domClick(this)"><input type="checkbox" name="cName" value="' + name_1 + '" onclick="checkboxClick(this)" /><div class="to__name">' + name_1 + '</div></span></div>';
-            this.getDom().appendChild(itemdom);
+    };
+    tree.prototype.dropClick = function (e) {
+        var dom = document.getElementById(e.path[3].id); //li的dom;
+        this.query(e[2].name, "get", "ull", function (data) {
+        });
+        // 切换样式状态
+        if (dom.className.indexOf("to_roate") > -1) {
+            dom.className = ""; //改变样式
+            e.path[0].src = "close.gif"; //改变图标
         }
-        // let item=new Item();
+        else {
+            dom.className = "to_roate";
+            e.path[0].src = "expend.gif";
+        }
+        var domShow = dom;
+        if (domShow.className.indexOf("to_show") > -1) {
+            dom.style.display = "none"; //隐藏东西
+        }
+        else {
+            dom.style.display = "black"; //显示。
+        }
     };
     return tree;
 }());
 var Item = /** @class */ (function () {
     function Item(parentid, id, name, isdir, leave) {
+        this.path = "d:/";
         this.isExpend = false;
         this.parentid = parentid;
         this.id = id;
@@ -63,5 +97,35 @@ var Item = /** @class */ (function () {
         this.isdir = isdir;
         this.leave = leave;
     }
+    Item.prototype.setPath = function (path) {
+        this.path = path;
+    };
+    Item.prototype.addTreeItem = function (pid, id, data, dom) {
+        if (data == null) {
+            return;
+        }
+        var arry = new Array();
+        var json = JSON.parse(data);
+        var ulmdom = document.createElement("ul");
+        ulmdom.id = id;
+        var ulhtml = '';
+        for (var i = 0; i < json.length; i++) {
+            var j = JSON.parse(json[i]);
+            var name_1 = j.name;
+            var isdir = j.isdir == "true";
+            var leave = Number(j.leave);
+            var path = j.path;
+            var item = new Item(pid, id, name_1, isdir, leave);
+            this.setPath(path); //路径
+            arry.push(item);
+            var sp1 = '<span class="to__dropdownList"  name=>' + path + '  <i onclick="dropClick(this)">  <img src="expend.gif" class="icon"></i></span>';
+            var sp2 = '<span ><input type="checkbox" name="input" value="' + name_1 + '" onclick="checkboxClick(this)" /> <div class="to_name">' + name_1 + '</div></span>';
+            var temp = '<li id="' + leave + name_1 + '">' + sp1 + sp2 + '</li>';
+            ulhtml += temp;
+        }
+        ulmdom.innerHTML = ulhtml;
+        dom.appendChild(ulmdom);
+        return arry;
+    };
     return Item;
 }());

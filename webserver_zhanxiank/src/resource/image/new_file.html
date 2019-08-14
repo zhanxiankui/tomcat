@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="index.css">
+    <title>纯JS树形结构插件</title>
+</head>
+<body>
+    <div class="to__block">
+        <div class="to__left">
+            <div class="to__arrow"><span>←</span><span>→</span></div>
+            <div class="to__title">选择组织架构</div>
+            <div class="to__content" id="leftCont"></div>
+        </div>
+        <div class="to__right">
+            <div class="to__title">已选择</div>
+            <div class="to__content" id="rightCont"></div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var checkedList = [] // 选中列表
+
+
+        // 节点单击事件
+        function domClick(e){
+            // 选中子元素所有input框
+            var subItem = e.parentNode.nextElementSibling
+            var inputList = subItem.querySelectorAll(".to__item")
+            for(var i = 0; i < inputList.length; i++){
+                var item = inputList[i]
+                item.querySelector("input").checked = !e.querySelector("input").checked
+                var subName = item.querySelector(".to__name").innerHTML
+            }
+            
+            // 选中当前input框
+            e.querySelector("input").checked = !e.querySelector("input").checked
+            select(e)
+        }
+
+        // 冒泡事件
+        function checkboxClick(e){
+            e.checked = !e.checked
+        }
+
+        // checkedbox选中事件
+        function select(){
+            // 筛选在右侧区域需要遍历的内容
+            checkedList = []
+            var cList = document.getElementsByName("cName")
+            for( var i = 0; i < cList.length; i++){
+                var classArr = (cList[i].parentNode.parentNode.className).split(' ')
+                var className = classArr[classArr.length - 1]
+                var level = parseInt(className.replace(/\w+-/g,'')) // 
+
+                // 设置显示的级别
+                var levelArr = document.querySelectorAll("[class^='to__item level-']")
+                var max = 1
+
+                for (var a = 0; a < levelArr.length; a++) {
+                    var item = levelArr[a];
+                    var arr = item.className.split('-')
+                    if(parseInt(arr[1]) > max){
+                        max = parseInt(arr[1])
+                    }
+                }
+                if(level == max && cList[i].checked == true){
+                    checkedList.push(cList[i].value)
+                }
+            }
+
+            // 右侧区域添加选中内容
+            var dom = document.getElementById("rightCont")
+            dom.innerHTML = ""
+            for (var i = 0; i < checkedList.length; i++) {
+                var item = checkedList[i];
+                var div = document.createElement("div")
+                div.className = "to__item"
+                div.innerHTML = '<span>' + item + '</span><span class="to__close" onclick="cancel(this)"><i>+</i></span>'
+                dom.appendChild(div)
+            }
+        }
+
+        // 取消选中事件
+        function cancel(dom){
+            var cList = document.getElementsByName("cName")
+            for (var i = 0; i < cList.length; i++) {
+                var item = cList[i];
+                if(item.value == dom.previousElementSibling.innerHTML)
+                {
+                    item.checked = false
+                    select();
+                    break;
+                }
+            }
+        }
+
+        // 下拉框点击事件
+        function dropClick(dom){
+            // 切换样式状态
+            if(dom.className.indexOf("to__roate") > -1){
+                dom.className = ""
+            }
+            else{
+                dom.className = "to__roate"
+            }
+            
+            // 显示隐藏内容
+            var domShow = dom.parentNode.parentNode.nextElementSibling
+            if(domShow.className.indexOf("to__show") > -1){
+                domShow.className = "to__subItem"
+            }
+            else{
+                domShow.className = "to__subItem to__show"
+            }
+        }
+
+        window.onload = function(){
+            // 模拟数据
+            var data = [
+                {
+                    name : "xxx公司",
+                    child: [
+                        {
+                            name : "综合部",
+                            child : [
+                                {
+                                    name : "小明",
+                                    child : []
+                                },
+                                {
+                                    name : "小红",
+                                    child : []
+                                }
+                            ]
+                        },
+                        {
+                            name : "技术部",
+                            child : [
+                                {
+                                    name : "小白",
+                                    child : []
+                                },
+                                {
+                                    name : "小黑",
+                                    child : []
+                                }
+                            ]
+                        },
+                        {
+                            name : "UI部",
+                            child : []
+                        }
+                    ]
+                }
+            ]
+            
+            var endHtml = 0
+            var html = ""
+            var level = 1
+
+            // 遍历树形结构
+            function getData(data, dom){
+                if(Object.prototype.toString.call(data) === '[object Array]'){
+                    for(var i = 0; i < data.length; i++){
+
+                        // 添加标题
+                        var item = document.createElement("div")
+                        var arrow = '<span class="to__dropdownList" ><i onclick="dropClick(this)"><svg t="1550632829702" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1783" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%"><defs><style type="text/css"></style></defs><path d="M959.52557 254.29773 511.674589 702.334953 63.824631 254.29773Z" p-id="1784"></path></svg></i></span>'
+
+                        // 设置显示级别
+                        if(level == 3){
+                            arrow = ""
+                        }
+                        item.innerHTML = '<div class="to__item level-' + level + '">' + arrow + '<span onclick="domClick(this)"><input type="checkbox" name="cName" value="' +data[i].name+ '" onclick="checkboxClick(this)" /><div class="to__name">' +data[i].name+ '</div></span></div>'
+                        dom.appendChild(item)
+                        
+                        // 添加子元素
+                        var subItem = document.createElement("div")
+                        subItem.className = "to__subItem"
+                        item.appendChild(subItem)
+
+                        if(data[i].child.length > 0){
+                            level++
+                            getData(data[i].child,subItem)
+                        }
+                        else{
+                            if(i == data.length - 1){
+                                level--
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 赋值
+            var baseDom = document.createElement("div")
+            getData(data,baseDom)
+            document.getElementById("leftCont").innerHTML =  baseDom.innerHTML
+            
+        }
+    </script>
+</body>
+</html>

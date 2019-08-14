@@ -113,6 +113,7 @@ public class FileUtil {
 	    fMap.put("name", f.getName());
 	    fMap.put("isdir", f.isFile()+"");
 	    fMap.put("leave", String.valueOf(num));
+	    fMap.put("path", f.getPath());
 		
 		return mapper.writeValueAsString(fMap)	;
 	}

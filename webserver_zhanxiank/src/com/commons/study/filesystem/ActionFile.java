@@ -33,16 +33,19 @@ public class ActionFile {
 		int index=String.valueOf(path).indexOf("@");   //这是初始化的标志。
 		if(index!=-1){
 			path=path.substring(0, index);
-			response.getStaticResource(HttpContext.getInstance().getType("html"),  "ts/filesys.html");
+			response.getStaticResource(HttpContext.getInstance().getType("html"), HttpContext.webdir+"/"+ "ts/filesys.html");
 			return;
 		}
-		 
+		
+		
 		File fle = new File((String) path);
 		ArrayList<String> sb = new ArrayList<>(); //还回一个对应的json文件
 		
 	    
 
-		if (fle.isFile()) { //如果是文件,不要取下一级		
+		if (fle.isFile()) { //如果是文件,不要取下一级	,还回资源提供查看。
+			
+			
 			sb.add(FileUtil.getJsonInfo(fle));
 		}
 		else {
@@ -55,7 +58,9 @@ public class ActionFile {
 
 			}
 			else { //下一级目录为空				
-				sb.add(FileUtil.getJsonInfo(fle));
+//				sb.add(FileUtil.getJsonInfo(fle));
+				
+				return;
 			}
 
 		}
@@ -63,6 +68,21 @@ public class ActionFile {
 		 ObjectMapper mapper=new ObjectMapper();
 		response.responseJson(mapper.writeValueAsString(sb));
 
+	}
+	
+	
+	///watchFile.do
+	public void watchFile(Object path) throws IOException {
+		String url=String.valueOf(path);
+	     File file=null;
+		if(url.indexOf("/")>-1){  //完整路径
+			file=new File(url);
+		}else{                         //这是web容器下的路径。
+			 file= new File(HttpContext.webdir + "/" + path);
+		}
+		
+        String contentype=HttpContext.getInstance().getType(url.substring(url.indexOf(".")+1));
+		response.getStaticResource(contentype, url);	
 	}
 
 	//download.do?path=
@@ -73,7 +93,7 @@ public class ActionFile {
 		String contentType = HttpContext.getInstance().getType(type);
 
 		if (file.length() == 0) {
-			response.getStaticResource("text/html; Charset=UTF-8", "404.html");
+			response.getStaticResource("text/html; Charset=UTF-8", HttpContext.webdir+"/"+"404.html");
 		}
 		response.responseFile(contentType, file);
 	}
@@ -81,16 +101,22 @@ public class ActionFile {
 	//edit.do?path
 	public void edit(Object path) throws IOException {
 		log.info("编辑文件开始");
-		File file = new File(HttpContext.webdir + "/" + path);
-		String name = (String) path;
-		String type = name.substring(name.indexOf(".") + 1);
+		
+		String url=String.valueOf(path);
+		File file=null;
+		if(url.indexOf("/")>-1){  //完整路径
+			file=new File(url);
+		}else{                         //这是web容器下的路径。
+			 file= new File(HttpContext.webdir + "/" + path);
+		}
+
+		String type = url.substring(url.indexOf(".") + 1);
 
 		if (!Arrays.asList(HttpContext.editTypeFile).contains(type)) {
 			return; //不能编辑的不处理。
 		}
-
-		String contentType = HttpContext.getInstance().getType(type);
-		response.getStaticResource(contentType, (String) path);
+		
+		response.responseHtml(FileUtil.fileToString(file));
 
 	}
 

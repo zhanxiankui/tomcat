@@ -51,11 +51,11 @@ public class HttpServer implements Callable<String> {
 					contentType = "text/plain";
 				}
 
-				if (!"/files".equals(url)&&!"do".equals(type)) //加载静态资源
+				if (!"/files".equals(url)&&!"do".equals(type)&&!"/project".equals(url)) //加载静态资源
 				{
 					response.setContentType(req.getContentType());
 					response.setHeader("Content-Type", contentType);
-					response.getStaticResource(contentType, req.getResource());
+					response.getStaticResource(contentType,HttpContext.webdir+"/"+ req.getResource());
 				}
 				else if("/files".equals(url)) { //文件系统的展示
 

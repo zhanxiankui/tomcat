@@ -111,7 +111,7 @@ public class FileUtil {
 	    ObjectMapper mapper=new ObjectMapper();
 	    Map<String, String> fMap=new HashMap<>();
 	    fMap.put("name", f.getName());
-	    fMap.put("isdir", f.isFile()+"");
+	    fMap.put("isdir", f.isDirectory()+"");
 	    fMap.put("leave", String.valueOf(num));
 	    fMap.put("path", f.getPath());
 		

@@ -56,38 +56,101 @@ var tree = /** @class */ (function () {
                 var value = subItem[0].value; //选择输入框
                 var txt = subItem[0].innerHTML; //点击文件名
                 var className = subItem[2].className; //展开和伸缩。
-                if (className == "to__dropdownList") {
+                var node = e.target; //点击的元素。
+                if (className == "to__dropdownList") { //文件夹才会展开。
                     _this.dropClick(e);
                 }
-                if (txt != null || txt != "") {
-                    //查看文件
+                if (txt != null && txt != "") { //查看文件，点击文件名字。
+                    _this.seeFile(e);
+                }
+                if (value != null && value != "") { //勾选按钮 是编辑文件东西。
+                    _this.eidt(e);
                 }
             };
         }
     };
+    tree.prototype.removeDom = function (id) {
+        var key = document.getElementById(id);
+        if (key) //清楚本身存在的dom结构。
+         {
+            var parentNode = key.parentNode;
+            parentNode.removeChild(key);
+        }
+    };
+    tree.prototype.seeFile = function (e) {
+        // this.query("/watchFile.do?path="+e.path[2].title,"get",null,function(data){ 
+        var dom = document.getElementById("right");
+        // let file=e.path[2].title;
+        var file = e.path[0].title;
+        var index = file.indexOf(".");
+        if (index == -1) {
+            return; //不查看
+        }
+        var type = file.substring(index + 1).trim();
+        var arrimg = ["gif", "bmp", "jpg", "png", "ico"];
+        var txt = ["txt", "xml", "json"];
+        this.removeDom("show"); //移除已经存在的dom结构
+        if (arrimg.indexOf(type) > -1) {
+            var img = document.createElement("img");
+            img.src = "/watchFile.do?path=" + file;
+            img.id = "show";
+            dom.appendChild(img);
+        }
+        else if (type == "html") {
+            var iframe = document.createElement("iframe");
+            // iframe.width = "100%";
+            iframe.id = "show";
+            iframe.src = "/watchFile.do?path=" + file;
+            dom.appendChild(iframe);
+        }
+        else if (txt.indexOf(type) > -1) {
+            var novel = document.createElement("textarea");
+            novel.id = "show";
+            this.query("/watchFile.do?path=" + file, "get", null, function (data) {
+                novel.innerHTML = data;
+            });
+        }
+        else {
+            alert("网页不能查看的文件类型");
+        }
+    };
+    tree.prototype.eidt = function (e) {
+        this.removeDom("show"); //移除已经dom结构。
+        var file = e.path[0].value;
+        var txt = ["txt", "xml", "json", "html"];
+        var type = file.substring(file.indexOf(".") + 1).trim();
+        if (txt.indexOf(type) == -1) {
+            alert("网页不能编辑的类型");
+            return;
+        }
+        var domtxt = document.getElementById("txt");
+        this.query("/watchFile.do?path=" + file, "get", null, function (data) {
+            domtxt.innerHTML = data;
+        });
+    };
     tree.prototype.dropClick = function (e) {
         var id = e.path[3].id;
         var dom = document.getElementById(id); //li的dom;
-        this.query("/show.do?path=" + e.path[2].title, "get", null, function (data) {
-            var item = new Item(id, "", "", true, 0);
-            item.addTreeItem(id, "", data, dom);
-        });
         // 切换样式状态
         if (dom.className.indexOf("to_roate") > -1) {
             dom.className = ""; //改变样式
             e.path[0].src = "close.gif"; //改变图标
+            e.path[3].lastElementChild.style.display = "none";
+            // dom.style.display = "none";  //隐藏东西
         }
         else {
             dom.className = "to_roate";
             e.path[0].src = "expend.gif";
+            // e.path[3].style.display = "block"; //显示。
+            e.path[3].lastElementChild.style.display = "block";
         }
-        var domShow = dom;
-        if (domShow.className.indexOf("to_show") > -1) {
-            dom.style.display = "none"; //隐藏东西
+        if (Number(e.path[3].childElementCount) > 2) { //结点已经存在
+            return;
         }
-        else {
-            dom.style.display = "black"; //显示。
-        }
+        this.query("/show.do?path=" + e.path[2].title, "get", null, function (data) {
+            var item = new Item(id, "", "", true, 0);
+            item.addTreeItem(id, "", data, dom);
+        });
     };
     return tree;
 }());
@@ -113,7 +176,7 @@ var Item = /** @class */ (function () {
         var json = JSON.parse(data);
         var ulmdom = document.createElement("ul");
         ulmdom.id = pid;
-        var num = (JSON.parse(json[0]).leave) * 9;
+        var num = ((JSON.parse(json[0]).leave) - 1) * 16;
         ulmdom.style.cssText = "margin-left:" + num + "px;";
         var ulhtml = '';
         for (var i = 0; i < json.length; i++) {
@@ -125,9 +188,17 @@ var Item = /** @class */ (function () {
             var item = new Item(pid, id, name_1, isdir, leave);
             this.setPath(path); //路径
             arry.push(item);
-            var sp1 = '<span class="to__dropdownList"  title=' + path + '> <i onclick="dropClick(this)">  <img src="expend.gif" class="icon"></i></span>';
-            var sp2 = '<span ><input type="checkbox" name="input" value="' + name_1 + '" onclick="checkboxClick(this)" /> <div class="to_name">' + name_1 + '</div></span>';
-            var temp = '<li id="' + leave + name_1 + '">' + sp1 + sp2 + '</li>';
+            var sp0 = '<span class="file"  title=' + path + '> <i>  <img src=""></i></span>'; //文件
+            var sp1 = '<span class="to__dropdownList"  title=' + path + '> <i>  <img src="close.gif" class="icon"></i></span>'; // 文件夹
+            var sp2 = '<span ><input type="checkbox" name="input" value="' + path + ' "/><div class="to_name" title="' + path + '">' + name_1 + "</div></span>";
+            var sp3 = '<span > <div class="to_name">' + name_1 + '</div></span>';
+            var temp = "";
+            if (isdir) {
+                temp = '<li id="' + leave + name_1 + '">' + sp1 + sp3 + '</li>'; //文件夹的处理
+            }
+            else {
+                temp = '<li id="' + leave + name_1 + '">' + sp0 + sp2 + '</li>'; //文件的处理。
+            }
             ulhtml += temp;
         }
         ulmdom.innerHTML = ulhtml;

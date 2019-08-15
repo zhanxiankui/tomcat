@@ -21,18 +21,18 @@
     -->
 
     <div id="top" class="topDiv">Succez文件管理系统</div>
-    <div id="left" style="width: 20%;height:90%;border-right:2px solid grey;"></div>
+    <div id="left" class="leftdiv"></div>
     <div id="right" class="rightDiv">
-        <div style="height: 10%;border-bottom:2px solid grey;"> <input id="button1" class="button" type="button"
+        <div style="height: 22%;border-bottom:2px solid grey;"> <input id="button1" class="button" type="button"
                 value="保存"></input> <input id="button2" class="button" type="button" value="下载"></input> </div>
-        <div style="height:89%;">
+        <div style="width:89%;">
             <textarea id="txt" class="editTxt"></textarea> </div>
     </div>
 
     <script>
         window.onload = function () {
             var t = new tree("id0", 0);
-            t.init("/show.do?path=d:/", "post", null);
+            t.init("/show.do?path=c:/", "post", null);
         }
     </script>
 

@@ -24,4 +24,4 @@ class utils {
         };
     }
 }
-exports.utils = utils;
+

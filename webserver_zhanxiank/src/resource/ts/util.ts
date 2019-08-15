@@ -1,5 +1,5 @@
 
-export class utils{
+ class utils{
     /**
  *   查询方法，封装了ajax的请求
  * @param url  
@@ -30,6 +30,15 @@ public   query(url:string,method:string,data:string,result:Function){
   }
 
 }
+
+
+
+public download(){
+   var dom=document.getElementById("button2");
+   
+}
+
+
 
 }
 

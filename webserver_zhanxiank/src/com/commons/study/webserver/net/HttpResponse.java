@@ -109,8 +109,7 @@ public class HttpResponse implements Response {
 	public void getStaticResource(String contentType, String name) throws IOException {
 
 		log.info("请求的资源为: {}", name);
-		String pathname = HttpContext.webdir;
-		File file = new File(pathname + "/" + name);
+		File file = new File(name);
 		String status = "200";
 		setStatus("200");
 		setContentType(contentType);
@@ -122,7 +121,7 @@ public class HttpResponse implements Response {
 		else {
 			status = "404" + " " + httpContext.getStats("404");
 			writeHeader(contentType, status);
-			writeFile(new File(pathname + "/404.html"));
+			writeFile(new File(HttpContext.webdir+"/"+  "404.html"));
 		}
 		  
 	

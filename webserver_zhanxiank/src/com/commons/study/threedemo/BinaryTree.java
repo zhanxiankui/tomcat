@@ -3,11 +3,8 @@ package com.commons.study.threedemo;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-
-
 public class BinaryTree {
-	
-	
+
 	private TNode root;
 
 	/**
@@ -78,10 +75,10 @@ public class BinaryTree {
 			while (leavenum > 0) {
 				leavenum--;
 				temp = queue.remove();
-				if (count == level ) {
+				if (count == level) {
 					sb.append(getValue(temp));
 				}
-				if(count>level){
+				if (count > level) {
 					break;
 				}
 

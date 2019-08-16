@@ -36,26 +36,19 @@ public class ActionFile {
 			response.getStaticResource(HttpContext.getInstance().getType("html"), HttpContext.webdir+"/"+ "ts/filesys.html");
 			return;
 		}
-		
-		
+			
 		File fle = new File((String) path);
 		ArrayList<String> sb = new ArrayList<>(); //还回一个对应的json文件
 		
-	    
-
-		if (fle.isFile()) { //如果是文件,不要取下一级	,还回资源提供查看。
-			
-			
+		if (fle.isFile()) { //如果是文件,不要取下一级	,还回资源提供查看。		
 			sb.add(FileUtil.getJsonInfo(fle));
 		}
 		else {
 			ArrayList<MyFile> list = FileUtil.getDirFils((String) path); //获取下一级目录	
-
 			if (list.size() > 0) { //下一级目录有文件			
 				for (MyFile my : list) {
 					sb.add(FileUtil.getJsonInfo(my.getFile()));
 				}
-
 			}
 			else { //下一级目录为空				
 //				sb.add(FileUtil.getJsonInfo(fle));
@@ -71,11 +64,34 @@ public class ActionFile {
 	}
 	
 	
+	//save.do
+	public void save(Object path) throws IOException {
+		 String url=String.valueOf(path);
+		 String data=request.getParameter("data");
+	     File file=null;
+		if(url.indexOf("\\")>-1){  //完整路径
+			file=new File(url);
+		}else{                         //这是web容器下的路径。
+			 file= new File(HttpContext.webdir + "/" + path);
+		}
+		
+		String  status="ok";
+		try {
+			FileUtil.writeFile(file, data);
+		}
+		catch (IOException e) {
+		   log.error(e.toString());
+		   status="bad";
+		}	
+		response.getOutputStream().write(status.getBytes());  //返回保存的状态
+	}
+	
+	
 	///watchFile.do
 	public void watchFile(Object path) throws IOException {
 		String url=String.valueOf(path);
 	     File file=null;
-		if(url.indexOf("/")>-1){  //完整路径
+		if(url.indexOf("\\")>-1){  //完整路径
 			file=new File(url);
 		}else{                         //这是web容器下的路径。
 			 file= new File(HttpContext.webdir + "/" + path);
@@ -88,7 +104,15 @@ public class ActionFile {
 	//download.do?path=
 	public void download(Object path) throws Exception {
 		log.info("{} 开始下载文件", new Date());
-		File file = new File(HttpContext.webdir + "/" + path);
+		
+		
+		String url=String.valueOf(path);
+		File file=null;
+		if(url.indexOf("\\")>-1){  //完整路径
+			file=new File(url);
+		}else{                         //这是web容器下的路径。
+			 file= new File(HttpContext.webdir + "/" + path);
+		}
 		String type = request.getContentType() == null ? "html" : request.getContentType();
 		String contentType = HttpContext.getInstance().getType(type);
 
@@ -104,7 +128,7 @@ public class ActionFile {
 		
 		String url=String.valueOf(path);
 		File file=null;
-		if(url.indexOf("/")>-1){  //完整路径
+		if(url.indexOf("\\")>-1){  //完整路径
 			file=new File(url);
 		}else{                         //这是web容器下的路径。
 			 file= new File(HttpContext.webdir + "/" + path);

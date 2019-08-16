@@ -27,9 +27,7 @@ import com.commons.study.webserver.util.FileUtil;
 public class HttpServer implements Callable<String> {
 
 	static final Logger log = LoggerFactory.getLogger(HttpServer.class);
-
 	private Socket socket;
-
 	public HttpServer(Socket socket) {
 		this.socket = socket;
 	}
@@ -51,17 +49,17 @@ public class HttpServer implements Callable<String> {
 					contentType = "text/plain";
 				}
 
-				if (!"/files".equals(url)&&!"do".equals(type)&&!"/project".equals(url)) //加载静态资源
+				if (!"/files".equals(url) && !"do".equals(type) && !"/project".equals(url)) //加载静态资源
 				{
 					response.setContentType(req.getContentType());
 					response.setHeader("Content-Type", contentType);
-					response.getStaticResource(contentType,HttpContext.webdir+"/"+ req.getResource());
+					response.getStaticResource(contentType, HttpContext.webdir + "/" + req.getResource());
 				}
-				else if("/files".equals(url)) { //文件系统的展示
+				else if ("/files".equals(url)) { //文件系统的展示
 
 					ActionShowFile showfile = new ActionShowFile();
 					String cmd = req.getParameter("path");
-                    String mark=req.getParameter("mark");
+					String mark = req.getParameter("mark");
 					contentType = "text/html; Charset=UTF-8";
 					response.setContentType(req.getContentType());
 					response.setHeader("Content-Type", contentType);
@@ -69,7 +67,7 @@ public class HttpServer implements Callable<String> {
 					if (cmd != null && cmd.length() <= 3) {
 						File file = new File(HttpContext.webdir + "/" + "file.html");
 						String html = FileUtil.fileToString(file);
-						html = html.replace("replacesdiv", FileUtil.getDivHtml(cmd,mark));
+						html = html.replace("replacesdiv", FileUtil.getDivHtml(cmd, mark));
 						response.responseHtml(html);
 					}
 					else {
@@ -77,27 +75,30 @@ public class HttpServer implements Callable<String> {
 					}
 
 				}
-				else{   //ftp文件系统
-					
-					FileServer  fileServer=new FileServer(req, response);
+				else { //ftp文件系统
+
+					FileServer fileServer = new FileServer(req, response);
 					fileServer.server();
-					
 				}
-				
 
 				outputStream.close();
-
 			}
-                       
-		}
-		catch (Exception e) {
-			log.error("出现问题", e);
-			socket.close();
+
+			return "success";
 			
+		}catch (Exception e) {
+			log.error("出现问题", e);
 			return "bad";
 		}
-
-		return "success";
+         finally{
+        	 log.info("关闭连接");
+        	 socket.close();
+         }
+	
 	}
+		
+	
+
+
 
 }

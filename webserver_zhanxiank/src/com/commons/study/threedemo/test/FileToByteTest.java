@@ -33,7 +33,6 @@ public class FileToByteTest {
 	}
 
 	
-	
 	public File getFiles(String fileName) {
 		
 		String pathname=this.getClass().getResource("").getFile();  //获取java文件所在的目录。

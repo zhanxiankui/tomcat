@@ -35,8 +35,9 @@ public   query(url:string,method:string,data:string,result:Function){
 
 public download(){
    var dom=document.getElementById("button2");
-   
+
 }
+
 
 
 

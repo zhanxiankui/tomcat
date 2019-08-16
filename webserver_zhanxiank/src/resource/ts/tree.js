@@ -8,6 +8,9 @@ var tree = /** @class */ (function () {
         this.query(url, way, path, function (data) {
             _this.addRootItem(data, _this.getDom());
             _this.domClick();
+            _this.addButtonOnclick("but", "/edit.do"); //编辑
+            _this.addButtonOnclick("but0", "/save.do"); //保存
+            _this.addButtonOnclick("but1", "/download.do"); //下载
         });
     };
     tree.prototype.getDom = function () {
@@ -30,7 +33,6 @@ var tree = /** @class */ (function () {
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4 && xhr.status == 200) {
                 var data_1 = xhr.response || xhr.responseText;
-                // alert(data);
                 result(data_1); //处理数据的函数
             }
         };
@@ -52,19 +54,18 @@ var tree = /** @class */ (function () {
                 if (subItem == null) {
                     return;
                 }
-                var name = subItem[0].neme;
-                var value = subItem[0].value; //选择输入框
-                var txt = subItem[0].innerHTML; //点击文件名
-                var className = subItem[2].className; //展开和伸缩。
-                var node = e.target; //点击的元素。
+                var txt = e.target.innerHTML; //点击文件名
+                // let className = subItem[2].className;  //展开和伸缩。
+                var className = e.target.parentNode.className;
                 if (className == "to__dropdownList") { //文件夹才会展开。
                     _this.dropClick(e);
                 }
                 if (txt != null && txt != "") { //查看文件，点击文件名字。
                     _this.seeFile(e);
-                }
-                if (value != null && value != "") { //勾选按钮 是编辑文件东西。
-                    _this.eidt(e);
+                    var file = e.target.title; //路径
+                    self.setbuttonName(file, "but"); //编辑button
+                    self.setbuttonName(file, "but0"); //保存button
+                    self.setbuttonName(file, "but1"); //下载button
                 }
             };
         }
@@ -80,8 +81,7 @@ var tree = /** @class */ (function () {
     tree.prototype.seeFile = function (e) {
         // this.query("/watchFile.do?path="+e.path[2].title,"get",null,function(data){ 
         var dom = document.getElementById("right");
-        // let file=e.path[2].title;
-        var file = e.path[0].title;
+        var file = e.target.title;
         var index = file.indexOf(".");
         if (index == -1) {
             return; //不查看
@@ -89,16 +89,20 @@ var tree = /** @class */ (function () {
         var type = file.substring(index + 1).trim();
         var arrimg = ["gif", "bmp", "jpg", "png", "ico"];
         var txt = ["txt", "xml", "json"];
+        this.removeDom("edit");
         this.removeDom("show"); //移除已经存在的dom结构
         if (arrimg.indexOf(type) > -1) {
             var img = document.createElement("img");
-            img.src = "/watchFile.do?path=" + file;
             img.id = "show";
+            img.style.width = "100%";
+            img.style.height = "100%";
+            img.src = "/watchFile.do?path=" + file;
             dom.appendChild(img);
         }
         else if (type == "html") {
             var iframe = document.createElement("iframe");
-            // iframe.width = "100%";
+            iframe.style.width = "100%";
+            iframe.style.height = "100%";
             iframe.id = "show";
             iframe.src = "/watchFile.do?path=" + file;
             dom.appendChild(iframe);
@@ -106,48 +110,88 @@ var tree = /** @class */ (function () {
         else if (txt.indexOf(type) > -1) {
             var novel = document.createElement("textarea");
             novel.id = "show";
-            this.query("/watchFile.do?path=" + file, "get", null, function (data) {
+            novel.style.width = "100%";
+            novel.style.height = "100%";
+            this.query("/edit.do?path=" + file, "get", null, function (data) {
                 novel.innerHTML = data;
+                dom.appendChild(novel);
             });
         }
         else {
             alert("网页不能查看的文件类型");
         }
     };
-    tree.prototype.eidt = function (e) {
-        this.removeDom("show"); //移除已经dom结构。
-        var file = e.path[0].value;
+    tree.prototype.addButtonOnclick = function (id, url) {
+        var _this = this;
+        var dom = document.getElementById(id);
+        dom.addEventListener("click", function (e) {
+            var dom = document.getElementById(id);
+            var href = url + "?path=" + dom.name;
+            if (id == "but") { //编辑
+                _this.eidt(dom.name);
+            }
+            else if (id == "but0") { //保存。
+                var txt = document.getElementById("edit").value;
+                _this.query(href + "&data=" + txt, "post", null, function (mark) {
+                    if (mark == "ok") {
+                        alert("保存成功");
+                    }
+                    else {
+                        alert("保存失败");
+                    }
+                });
+            }
+            else if (id == "but1") { //下载
+                window.location.href = href;
+            }
+        }, false);
+    };
+    tree.prototype.setbuttonName = function (data, id) {
+        var dom = document.getElementById(id);
+        dom.name = data;
+    };
+    tree.prototype.eidt = function (file) {
         var txt = ["txt", "xml", "json", "html"];
         var type = file.substring(file.indexOf(".") + 1).trim();
         if (txt.indexOf(type) == -1) {
             alert("网页不能编辑的类型");
             return;
         }
-        var domtxt = document.getElementById("txt");
-        this.query("/watchFile.do?path=" + file, "get", null, function (data) {
+        this.removeDom("edit");
+        this.removeDom("show");
+        var dom = document.getElementById("right");
+        var domtxt = document.createElement("textarea");
+        domtxt.id = "edit";
+        domtxt.style.width = "100%";
+        domtxt.style.height = "100%";
+        this.query("/edit.do?path=" + file, "get", null, function (data) {
             domtxt.innerHTML = data;
+            dom.appendChild(domtxt);
         });
     };
     tree.prototype.dropClick = function (e) {
-        var id = e.path[3].id;
+        // let id = e.path[3].id;
+        var id = e.target.parentNode.parentNode.id;
         var dom = document.getElementById(id); //li的dom;
         // 切换样式状态
         if (dom.className.indexOf("to_roate") > -1) {
             dom.className = ""; //改变样式
-            e.path[0].src = "close.gif"; //改变图标
-            e.path[3].lastElementChild.style.display = "none";
+            e.target.src = "close.gif"; //改变图标
+            if (e.target.parentNode.parentNode.childElementCount > 2) //修改错位的东西。
+                e.target.parentNode.parentNode.lastElementChild.style.display = "none";
             // dom.style.display = "none";  //隐藏东西
         }
         else {
             dom.className = "to_roate";
-            e.path[0].src = "expend.gif";
+            e.target.src = "expend.gif";
             // e.path[3].style.display = "block"; //显示。
-            e.path[3].lastElementChild.style.display = "block";
+            e.target.parentNode.parentNode.lastElementChild.style.display = "block";
+            e.target.parentNode.nextElementSibling.style.display = "inline-block"; //防止图标错位。
         }
-        if (Number(e.path[3].childElementCount) > 2) { //结点已经存在
+        if (Number(e.target.parentNode.parentNode.childElementCount) > 2) { //结点已经存在
             return;
         }
-        this.query("/show.do?path=" + e.path[2].title, "get", null, function (data) {
+        this.query("/show.do?path=" + e.target.parentNode.title, "get", null, function (data) {
             var item = new Item(id, "", "", true, 0);
             item.addTreeItem(id, "", data, dom);
         });
@@ -176,7 +220,8 @@ var Item = /** @class */ (function () {
         var json = JSON.parse(data);
         var ulmdom = document.createElement("ul");
         ulmdom.id = pid;
-        var num = ((JSON.parse(json[0]).leave) - 1) * 16;
+        // var num = ((JSON.parse(json[0]).leave) - 1) * 3;
+        var num = 0;
         ulmdom.style.cssText = "margin-left:" + num + "px;";
         var ulhtml = '';
         for (var i = 0; i < json.length; i++) {
@@ -188,10 +233,10 @@ var Item = /** @class */ (function () {
             var item = new Item(pid, id, name_1, isdir, leave);
             this.setPath(path); //路径
             arry.push(item);
-            var sp0 = '<span class="file"  title=' + path + '> <i>  <img src=""></i></span>'; //文件
-            var sp1 = '<span class="to__dropdownList"  title=' + path + '> <i>  <img src="close.gif" class="icon"></i></span>'; // 文件夹
-            var sp2 = '<span ><input type="checkbox" name="input" value="' + path + ' "/><div class="to_name" title="' + path + '">' + name_1 + "</div></span>";
-            var sp3 = '<span > <div class="to_name">' + name_1 + '</div></span>';
+            var sp0 = '<span class="file"  title=' + path + '> <i>  <img src="null.gif" class="icon"></i></span>'; //文件
+            var sp1 = '<span class="to__dropdownList"  title=' + path + '> <img src="close.gif" class="icon"> </span>'; // 文件夹
+            var sp2 = '<span ><img src="file.png"  class="icon" value="' + path + ' "/>  <div class="to_name" title="' + path + '">' + name_1 + "</div></span>";
+            var sp3 = '<span >  <img  src="dir.png" class="icon">  <div class="to_name">' + name_1 + '</div></span>';
             var temp = "";
             if (isdir) {
                 temp = '<li id="' + leave + name_1 + '">' + sp1 + sp3 + '</li>'; //文件夹的处理

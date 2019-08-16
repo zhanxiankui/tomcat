@@ -1,11 +1,16 @@
 package com.commons.study.webserver.util;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -56,9 +61,9 @@ public class FileUtil {
 		if (file.isFile()) {
 			return filelist; //是文件没有下一级目录直接还回
 		}
-		
-		File[] files = file.listFiles(); 
-		if (files == null) {                  //有些隐藏文件属性很诡异，忽略
+
+		File[] files = file.listFiles();
+		if (files == null) { //有些隐藏文件属性很诡异，忽略
 			files = new File("D:/succezIDE").listFiles();
 		}
 
@@ -68,7 +73,6 @@ public class FileUtil {
 		return filelist;
 	}
 
-	
 	public static String fileToString(File file) {
 		String str = "";
 		try {
@@ -97,53 +101,50 @@ public class FileUtil {
 		}
 		return flg;
 	}
-	
-	
-	
+
 	public static String getJsonInfo(File f) throws JsonProcessingException {
-		
-		if(f==null){
+
+		if (f == null) {
 			return null;
 		}
-		String[] t=f.getPath().split("/");
-		int num=t.length;
-	    
-	    ObjectMapper mapper=new ObjectMapper();
-	    Map<String, String> fMap=new HashMap<>();
-	    fMap.put("name", f.getName());
-	    fMap.put("isdir", f.isDirectory()+"");
-	    fMap.put("leave", String.valueOf(num));
-	    fMap.put("path", f.getPath());
-		
-		return mapper.writeValueAsString(fMap)	;
-	}
-	
-	
+		String[] t = f.getPath().split("\\\\");
+		int num = t.length;
 
-	public static String getDivHtml(String cmd,String parent) {
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, String> fMap = new HashMap<>();
+		fMap.put("name", f.getName());
+		fMap.put("isdir", f.isDirectory() + "");
+		fMap.put("leave", String.valueOf(num));
+		fMap.put("path", f.getPath());
+
+		return mapper.writeValueAsString(fMap);
+	}
+
+	public static String getDivHtml(String cmd, String parent) {
 
 		File fle = new File(cmd);
 		if (fle.isFile()) { //如果是文件,没有还回
 			return null;
 		}
 
-		ArrayList<MyFile> list = FileUtil.getDirFils(cmd);  //获取下一级目录	
+		ArrayList<MyFile> list = FileUtil.getDirFils(cmd); //获取下一级目录	
 		StringBuilder sb = new StringBuilder();
-		String pa =cmd; //默认路径
+		String pa = cmd; //默认路径
 
-		if (list.size() >0) { //下一级目录有文件
+		if (list.size() > 0) { //下一级目录有文件
 			File f = list.get(0).getFile().getParentFile() == null ? list.get(0).getFile()
 					: list.get(0).getFile().getParentFile();
 			pa = f.getParent() == null ? f.getPath() : f.getParent().replace("\\", "/");
-		}else{   //下一级目录为空
-			
-			pa=fle.getParent();		
-			if(parent!=null)  //这是还回的操作。
-			list=FileUtil.getDirFils(pa);	
-			
 		}
-		
-		pa=pa+"&mark=parent";
+		else { //下一级目录为空
+
+			pa = fle.getParent();
+			if (parent != null) //这是还回的操作。
+				list = FileUtil.getDirFils(pa);
+
+		}
+
+		pa = pa + "&mark=parent";
 
 		//   		path=path.replace("\\", "/");
 		sb.append("<p> <a  href=" + "'" + pa + "'" + "  onclick= \"getDatas(" + "'" + pa + "'" + ")\" >" + "上一级目录"
@@ -158,6 +159,19 @@ public class FileUtil {
 		sb.append("</table>");
 		return sb.toString();
 
+	}
+
+	public static String writeFile(File f, String data) throws IOException{
+
+		OutputStream out = null;
+		try {
+			out = new FileOutputStream(f);
+			out.write(data.getBytes());
+			return "ok";
+		}
+		finally{
+			out.close();
+		}	
 	}
 
 	public File getFile() {

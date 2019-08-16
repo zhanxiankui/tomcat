@@ -10,12 +10,15 @@ class tree {
         this.leave = leave;
     }
 
-
     public init(url: string, way: string, path: string) {
         this.query(url, way, path, (data: any) => {
 
             this.addRootItem(data, this.getDom());
             this.domClick();
+            this.addButtonOnclick("but", "/edit.do");  //编辑
+            this.addButtonOnclick("but0","/save.do");  //保存
+            this.addButtonOnclick("but1","/download.do");  //下载
+           
         });
 
 
@@ -48,7 +51,6 @@ class tree {
         xhr.onreadystatechange = () => {   //回调函数
             if (xhr.readyState == 4 && xhr.status == 200) {
                 let data = xhr.response || xhr.responseText
-                // alert(data);
                 result(data);   //处理数据的函数
             }
 
@@ -76,22 +78,20 @@ class tree {
                 if (subItem == null) {
                     return;
                 }
-                let name = subItem[0].neme;
-                let value = subItem[0].value; //选择输入框
-                let txt = subItem[0].innerHTML; //点击文件名
-                let className = subItem[2].className;  //展开和伸缩。
-
-                let node = e.target; //点击的元素。
+                let txt = e.target.innerHTML; //点击文件名
+                // let className = subItem[2].className;  //展开和伸缩。
+                let className = e.target.parentNode.className;
 
                 if (className == "to__dropdownList") {  //文件夹才会展开。
                     this.dropClick(e);
                 }
                 if (txt != null && txt != "") {         //查看文件，点击文件名字。
                     this.seeFile(e);
-                }
+                    let file = e.target.title;  //路径
+                    self.setbuttonName(file, "but");  //编辑button
+                    self.setbuttonName(file,"but0");  //保存button
+                    self.setbuttonName(file,"but1");  //下载button
 
-                if (value != null && value != "") {  //勾选按钮 是编辑文件东西。
-                    this.eidt(e);
                 }
 
             }
@@ -100,7 +100,7 @@ class tree {
     }
 
 
-    public  removeDom(id:string){
+    public removeDom(id: string) {
 
         var key = document.getElementById(id);
         if (key)  //清楚本身存在的dom结构。
@@ -114,9 +114,7 @@ class tree {
         // this.query("/watchFile.do?path="+e.path[2].title,"get",null,function(data){ 
 
         var dom = document.getElementById("right");
-        // let file=e.path[2].title;
-        var file = e.path[0].title;
-
+        var file = e.target.title;
         let index = file.indexOf(".");
         if (index == -1) {
             return;  //不查看
@@ -125,25 +123,32 @@ class tree {
         let arrimg = ["gif", "bmp", "jpg", "png", "ico"];
         let txt = ["txt", "xml", "json"];
 
+        this.removeDom("edit");
         this.removeDom("show"); //移除已经存在的dom结构
         if (arrimg.indexOf(type) > -1) {
             var img = document.createElement("img");
-            img.src = "/watchFile.do?path=" + file;
             img.id = "show";
+            img.style.width="100%";
+            img.style.height="100%";
+            img.src = "/watchFile.do?path=" + file;
             dom.appendChild(img);
         }
         else if (type == "html") {
             var iframe = document.createElement("iframe");
-            // iframe.width = "100%";
+            iframe.style.width = "100%";
+            iframe.style.height="100%";
             iframe.id = "show";
             iframe.src = "/watchFile.do?path=" + file;
             dom.appendChild(iframe);
 
         } else if (txt.indexOf(type) > -1) {
-            var novel= document.createElement("textarea");
-             novel.id="show";
-            this.query("/watchFile.do?path=" + file, "get", null, function (data) {
+            var novel = document.createElement("textarea");
+            novel.id = "show";
+            novel.style.width="100%";
+            novel.style.height="100%";
+            this.query("/edit.do?path=" + file, "get", null, function (data) {
                 novel.innerHTML = data;
+                dom.appendChild(novel);
             });
 
         }
@@ -154,10 +159,41 @@ class tree {
     }
 
 
-    public eidt(e) { //编辑文件
 
-        this.removeDom("show"); //移除已经dom结构。
-        let file = e.path[0].value;
+    public addButtonOnclick(id: string, url: string) {
+        let dom = document.getElementById(id);
+        dom.addEventListener("click", (e) => {
+            let dom = document.getElementById(id);
+            let href = url + "?path=" + dom.name;
+
+            if (id == "but") {    //编辑
+                this.eidt(dom.name);
+            }
+            else if (id == "but0") {  //保存。
+
+                let txt = document.getElementById("edit").value;
+                this.query(href+"&data="+txt, "post", null, (mark) => {
+                    if (mark == "ok") {
+                        alert("保存成功");
+                    } else {
+                        alert("保存失败");
+                    }
+                });
+            } else if (id == "but1") {  //下载
+                window.location.href = href;
+            }
+
+        }, false);
+
+    }
+
+    public setbuttonName(data: string, id: string) {
+        let dom = document.getElementById(id);
+        dom.name = data;
+    }
+
+
+    public eidt(file: string) { //编辑文件
         let txt = ["txt", "xml", "json", "html"];
         let type = file.substring(file.indexOf(".") + 1).trim();
 
@@ -165,36 +201,47 @@ class tree {
             alert("网页不能编辑的类型");
             return;
         }
-        var domtxt = document.getElementById("txt");
-        this.query("/watchFile.do?path=" + file, "get", null, function (data) {
+
+        this.removeDom("edit");
+        this.removeDom("show");
+        var dom=document.getElementById("right");
+        let domtxt=document.createElement("textarea");
+        domtxt.id="edit";
+        domtxt.style.width="100%";
+        domtxt.style.height="100%";
+        this.query("/edit.do?path=" + file, "get", null, function (data) {
             domtxt.innerHTML = data;
+            dom.appendChild(domtxt);
         });
 
     }
 
     public dropClick(e: any) {  //点击事件。
-        let id = e.path[3].id;
+        // let id = e.path[3].id;
+        let id = e.target.parentNode.parentNode.id;
         let dom = document.getElementById(id);  //li的dom;
         // 切换样式状态
         if (dom.className.indexOf("to_roate") > -1) {
             dom.className = ""; //改变样式
-            e.path[0].src = "close.gif"; //改变图标
-            e.path[3].lastElementChild.style.display = "none";
+            e.target.src = "close.gif"; //改变图标
+            if(e.target.parentNode.parentNode.childElementCount>2)   //修改错位的东西。
+            e.target.parentNode.parentNode.lastElementChild.style.display = "none";
             // dom.style.display = "none";  //隐藏东西
         }
         else {
             dom.className = "to_roate";
-            e.path[0].src = "expend.gif";
+            e.target.src = "expend.gif";
             // e.path[3].style.display = "block"; //显示。
-            e.path[3].lastElementChild.style.display = "block";
+            e.target.parentNode.parentNode.lastElementChild.style.display = "block";
+            e.target.parentNode.nextElementSibling.style.display = "inline-block";  //防止图标错位。
         }
 
-        if (Number(e.path[3].childElementCount) > 2) {  //结点已经存在
+        if (Number(e.target.parentNode.parentNode.childElementCount) > 2) {  //结点已经存在
 
             return;
         }
 
-        this.query("/show.do?path=" + e.path[2].title, "get", null, function (data) {  //追加结点
+        this.query("/show.do?path=" + e.target.parentNode.title, "get", null, function (data) {  //追加结点
             var item = new Item(id, "", "", true, 0);
             item.addTreeItem(id, "", data, dom);
         });
@@ -202,8 +249,6 @@ class tree {
     }
 
 }
-
-
 
 
 
@@ -241,7 +286,8 @@ class Item {
         var json = JSON.parse(data);
         let ulmdom = document.createElement("ul");
         ulmdom.id = pid;
-        var num = ((JSON.parse(json[0]).leave) - 1) * 16;
+        // var num = ((JSON.parse(json[0]).leave) - 1) * 3;
+        var num=0;
         ulmdom.style.cssText = "margin-left:" + num + "px;";
         var ulhtml = '';
         for (let i = 0; i < json.length; i++) {
@@ -255,10 +301,10 @@ class Item {
             this.setPath(path); //路径
             arry.push(item);
 
-            let sp0 = '<span class="file"  title=' + path + '> <i>  <img src=""></i></span>';  //文件
-            let sp1 = '<span class="to__dropdownList"  title=' + path + '> <i>  <img src="close.gif" class="icon"></i></span>';  // 文件夹
-            let sp2 = '<span ><input type="checkbox" name="input" value="' + path + ' "/><div class="to_name" title="' + path + '">' + name + "</div></span>";
-            let sp3 = '<span > <div class="to_name">' + name + '</div></span>';
+            let sp0 = '<span class="file"  title=' + path + '> <i>  <img src="null.gif" class="icon"></i></span>';  //文件
+            let sp1 = '<span class="to__dropdownList"  title=' + path + '> <img src="close.gif" class="icon"> </span>';  // 文件夹
+            let sp2 = '<span ><img src="file.png"  class="icon" value="' + path + ' "/>  <div class="to_name" title="' + path + '">' + name + "</div></span>";
+            let sp3 = '<span >  <img  src="dir.png" class="icon">  <div class="to_name">' + name + '</div></span>';
 
             let temp = "";
 

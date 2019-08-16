@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-
     <link rel="stylesheet" href="../filetree.css">
     <script src="../ts/tree.js"></script>
 </head>
@@ -23,19 +22,19 @@
     <div id="top" class="topDiv">Succez文件管理系统</div>
     <div id="left" class="leftdiv"></div>
     <div id="right" class="rightDiv">
-        <div style="height: 22%;border-bottom:2px solid grey;"> <input id="button1" class="button" type="button"
-                value="保存"></input> <input id="button2" class="button" type="button" value="下载"></input> </div>
-        <div style="width:89%;">
-            <textarea id="txt" class="editTxt"></textarea> </div>
+        <div style="height: 25px;border-bottom:1px solid grey;"> 
+            <input id="but" class="button" type="button" value="编辑"></input> 
+            <input id="but0" class="button" type="button" value="保存"></input> 
+            <input id="but1" class="button" type="button" value="下载"></input> 
+        </div>
     </div>
 
     <script>
         window.onload = function () {
             var t = new tree("id0", 0);
-            t.init("/show.do?path=c:/", "post", null);
+            t.init("/show.do?path=d:/", "post", null);
         }
     </script>
-
 </body>
 
 </html>

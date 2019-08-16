@@ -1,4 +1,5 @@
 package com.commons.study.threedemo;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,27 +22,21 @@ public class IntToHex {
 	 * @return
 	 */
 	public String int2Hex(int num) {
-		
-		boolean b=false;
-		if(num<0)
-		{
-			return null;   //不处理负数。
+		if (num < 0) {
+			return null; //不处理负数。
 		}
-          
 		StringBuilder sb = new StringBuilder();
 		int temp = num / targ;
 		int mark = num % targ;
 		sb.append(num2Char(mark));
-		while (temp >0) {
+		while (temp > 0) {
 			num = temp;
 			mark = num % targ;
 			sb.append(num2Char(mark));
 			temp = num / targ;
 		}
-		
-	   return   sb.reverse().toString();
-		
-		
+
+		return sb.reverse().toString();
 	}
 
 	/** 数字变成对应的字符串
@@ -49,13 +44,13 @@ public class IntToHex {
 	* @param n
 	* @return
 	*/
-	
+
 	public String num2Char(int n) {
 		if (n < 10) {
 			return String.valueOf(n);
 		}
-	
-	return	String.valueOf((char) (n+55));
-		
+
+		return String.valueOf((char) (n + 55));
+
 	}
 }

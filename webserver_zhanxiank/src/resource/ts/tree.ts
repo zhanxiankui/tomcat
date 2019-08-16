@@ -173,7 +173,8 @@ class tree {
 
                 let txt = document.getElementById("edit").value;
                 this.query(href+"&data="+txt, "post", null, (mark) => {
-                    if (mark == "ok") {
+                    let status=JSON.parse(mark).status;
+                    if (status== "ok") {
                         alert("保存成功");
                     } else {
                         alert("保存失败");

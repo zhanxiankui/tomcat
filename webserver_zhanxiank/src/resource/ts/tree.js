@@ -133,7 +133,8 @@ var tree = /** @class */ (function () {
             else if (id == "but0") { //保存。
                 var txt = document.getElementById("edit").value;
                 _this.query(href + "&data=" + txt, "post", null, function (mark) {
-                    if (mark == "ok") {
+                    var status = JSON.parse(mark).status;
+                    if (status == "ok") {
                         alert("保存成功");
                     }
                     else {

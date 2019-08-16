@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,9 +85,10 @@ public class ActionFile {
 		   log.error(e.toString());
 		   status="bad";
 		}	
-		response.getOutputStream().write(status.getBytes());  //返回保存的状态
+		Map<String, String> smap = new HashMap<>();
+		smap.put("status", status);
+		response.responseJson(new ObjectMapper().writeValueAsString(smap));;  //返回保存的状态
 	}
-	
 	
 	///watchFile.do
 	public void watchFile(Object path) throws IOException {

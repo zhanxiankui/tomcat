@@ -60,7 +60,7 @@ public class HttpRequest implements Request {
 		StringBuilder sb = new StringBuilder();
 		String line = null;
 		
-		pareInformat(br);
+	
 		
 		try {
 
@@ -113,8 +113,6 @@ public class HttpRequest implements Request {
 	
 	public void getFirstHttpInfor(String line) throws Exception {
 		
-		
-
 			log.info("第一行信息:{}",line);
 			if (line != null && line.length() > 0) {
 				String[] temp = line.split(" ");
@@ -150,7 +148,7 @@ public class HttpRequest implements Request {
 		//读取请求行 
 		String requestLine = br.readLine(); //第一行数据
 		if (requestLine != null) {
-			sb.append(requestLine);
+			sb.append(requestLine).append("\n");
 			String[] reqs = requestLine.split(" ");
 			if (reqs != null && reqs.length > 0) {
 				if ("GET".equals(reqs[0])) {
@@ -161,7 +159,6 @@ public class HttpRequest implements Request {
 				}
 			}
 		}
-
 		
 		//读取请求头 
 		while ((str = br.readLine()) != null) {
@@ -178,7 +175,7 @@ public class HttpRequest implements Request {
 		}
 
 		                                  //POST请求，Content-type为 multipart/form-data 
-		if ("POST".equals(this.getMethod()) && contentType.startsWith("multipart/form-data")) {
+		if ("POST".equals(this.getMethod())&&contentType!=null && contentType.startsWith("multipart/form-data")) {
 			//文件上传的分割位 这里只处理单个文件的上传 
 			String boundary = contentType.substring(contentType.indexOf("boundary") + "boundary=".length());
 			while ((str = br.readLine()) != null) {

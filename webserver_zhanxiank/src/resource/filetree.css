@@ -3,12 +3,6 @@ select {
   margin: 0;
   padding: 0;
 }
-.to__header .to__flow .to__flow__item .to__flow__name {
-  display: inline-block;
-  cursor: pointer;
-}
-
-
 
 .to__block {
   padding-left: 10px;
@@ -16,13 +10,7 @@ select {
 }
 
 
-
-.to__block .to__left {
-  position: relative;
-  margin-right: 30px;
-}
-
-.to__block .to__left .to__item .to__dropdownList i {
+.to__block  .to__item .to__dropdownList i {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -32,7 +20,7 @@ select {
   display: inline-block;
   margin: auto 0;
   cursor: pointer;
-  transform: rotate(-90deg);
+  transform: rotate(-90deg);   /*  动画效果*/
 }
 
 
@@ -49,7 +37,7 @@ ul {     /* 去掉小圆点 */
 }
 
 .to_name {
-  /*行内样式  */
+              /*行内样式  */
   display: inline-block;
   vertical-align: middle;
   cursor: pointer;
@@ -81,26 +69,11 @@ span {
 }
 
 
-/*文本编辑框样式*/
-.editTxt {
-  width: 100%;
-  height: 95%;
-  display: block;
-  margin: 0 auto;
-  overflow: hidden;
-  font-size: 14px;
-  line-height: 24px;
-  padding: 2px;
-  border: none;
-  outline: none;
-}
-
 /*页面布局左侧div样式*/
 .rightDiv {
   width: 60%;
   height: 90%;
   left: 39%;
-  /* top: 43%; */
   position: absolute;
   border-left: 2px solid grey;
 }

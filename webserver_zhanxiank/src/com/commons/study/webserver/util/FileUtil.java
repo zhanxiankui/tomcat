@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.commons.study.webserver.action.ActionShowFile;
+import com.commons.study.webserver.entity.HttpContext;
 import com.commons.study.webserver.entity.MyFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -174,6 +175,19 @@ public class FileUtil {
 		}	
 	}
 
+	
+	public static File getRealFileLocate(Object path) {
+		
+		String url=String.valueOf(path);
+		File file=null;
+		if(url.indexOf("\\")>-1){  //完整路径
+			file=new File(url);
+		}else{                         //这是web容器下的路径。
+			 file= new File(HttpContext.webdir + "/" + path);
+		}		
+		return file;
+	}
+	
 	public File getFile() {
 		return file;
 	}

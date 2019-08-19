@@ -11,6 +11,7 @@ var tree = /** @class */ (function () {
             _this.addButtonOnclick("but", "/edit.do"); //编辑
             _this.addButtonOnclick("but0", "/save.do"); //保存
             _this.addButtonOnclick("but1", "/download.do"); //下载
+            _this.addClickUpload("fileupload");
         });
     };
     tree.prototype.getDom = function () {
@@ -50,7 +51,6 @@ var tree = /** @class */ (function () {
             var self = this;
             dom[i].onclick = function (e) {
                 var subItem = e.path;
-                var obj = self;
                 if (subItem == null) {
                     return;
                 }
@@ -66,6 +66,7 @@ var tree = /** @class */ (function () {
                     self.setbuttonName(file, "but"); //编辑button
                     self.setbuttonName(file, "but0"); //保存button
                     self.setbuttonName(file, "but1"); //下载button
+                    self.setbuttonName(file, "upload"); //上传文件
                 }
             };
         }
@@ -88,7 +89,7 @@ var tree = /** @class */ (function () {
         }
         var type = file.substring(index + 1).trim();
         var arrimg = ["gif", "bmp", "jpg", "png", "ico"];
-        var txt = ["txt", "xml", "json"];
+        var txt = ["txt", "xml", "json", "css", "js"];
         this.removeDom("edit");
         this.removeDom("show"); //移除已经存在的dom结构
         if (arrimg.indexOf(type) > -1) {
@@ -120,6 +121,38 @@ var tree = /** @class */ (function () {
         else {
             alert("网页不能查看的文件类型");
         }
+    };
+    tree.prototype.uploadAndSubmit = function () {
+        var form = document.forms["uploadForm"];
+        var path = document.getElementById("upload").name;
+        if (form["upload"].files.length > 0) {
+            var file = form["upload"].files[0];
+            var fd = new FormData();
+            fd.append("file", file);
+            fd.append("path", path);
+            fd.append("fileName", file.name);
+            var xhr_1 = new XMLHttpRequest();
+            xhr_1.open("POST", "/upload.do");
+            // xhr.open("POST", "/upload.do?path=" + path + "&fileName=" + file.name);
+            //  xhr.overrideMimeType("application/octet-stream");
+            xhr_1.send(fd);
+            xhr_1.onreadystatechange = function () {
+                if (xhr_1.readyState == 4 && xhr_1.status == 200) {
+                    console.log(xhr_1.response || xhr_1.responseText);
+                }
+            };
+        }
+        else {
+            alert("请选择一个文件");
+        }
+    };
+    tree.prototype.addClickUpload = function (id) {
+        var _this = this;
+        var dom = document.getElementById(id);
+        var submit = document.querySelector('#submit');
+        dom.addEventListener("click", function (e) {
+            _this.uploadAndSubmit();
+        });
     };
     tree.prototype.addButtonOnclick = function (id, url) {
         var _this = this;
@@ -237,7 +270,7 @@ var Item = /** @class */ (function () {
             var sp0 = '<span class="file"  title=' + path + '> <i>  <img src="null.gif" class="icon"></i></span>'; //文件
             var sp1 = '<span class="to__dropdownList"  title=' + path + '> <img src="close.gif" class="icon"> </span>'; // 文件夹
             var sp2 = '<span ><img src="file.png"  class="icon" value="' + path + ' "/>  <div class="to_name" title="' + path + '">' + name_1 + "</div></span>";
-            var sp3 = '<span >  <img  src="dir.png" class="icon">  <div class="to_name">' + name_1 + '</div></span>';
+            var sp3 = '<span >  <img  src="dir.png" class="icon">  <div class="to_name"  title="' + path + '">' + name_1 + '</div></span>';
             var temp = "";
             if (isdir) {
                 temp = '<li id="' + leave + name_1 + '">' + sp1 + sp3 + '</li>'; //文件夹的处理

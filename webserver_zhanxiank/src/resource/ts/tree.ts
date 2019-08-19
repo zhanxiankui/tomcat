@@ -16,9 +16,10 @@ class tree {
             this.addRootItem(data, this.getDom());
             this.domClick();
             this.addButtonOnclick("but", "/edit.do");  //编辑
-            this.addButtonOnclick("but0","/save.do");  //保存
-            this.addButtonOnclick("but1","/download.do");  //下载
-           
+            this.addButtonOnclick("but0", "/save.do");  //保存
+            this.addButtonOnclick("but1", "/download.do");  //下载
+            this.addClickUpload("fileupload");
+
         });
 
 
@@ -74,7 +75,6 @@ class tree {
 
             dom[i].onclick = (e) => {
                 var subItem = e.path;
-                var obj = self;
                 if (subItem == null) {
                     return;
                 }
@@ -89,9 +89,10 @@ class tree {
                     this.seeFile(e);
                     let file = e.target.title;  //路径
                     self.setbuttonName(file, "but");  //编辑button
-                    self.setbuttonName(file,"but0");  //保存button
-                    self.setbuttonName(file,"but1");  //下载button
-
+                    self.setbuttonName(file, "but0");  //保存button
+                    self.setbuttonName(file, "but1");  //下载button
+                    self.setbuttonName(file,"upload");  //上传文件
+            
                 }
 
             }
@@ -116,27 +117,29 @@ class tree {
         var dom = document.getElementById("right");
         var file = e.target.title;
         let index = file.indexOf(".");
+
         if (index == -1) {
             return;  //不查看
         }
+
         let type = file.substring(index + 1).trim();
         let arrimg = ["gif", "bmp", "jpg", "png", "ico"];
-        let txt = ["txt", "xml", "json"];
+        let txt = ["txt", "xml", "json", "css", "js"];
 
         this.removeDom("edit");
         this.removeDom("show"); //移除已经存在的dom结构
         if (arrimg.indexOf(type) > -1) {
             var img = document.createElement("img");
             img.id = "show";
-            img.style.width="100%";
-            img.style.height="100%";
+            img.style.width = "100%";
+            img.style.height = "100%";
             img.src = "/watchFile.do?path=" + file;
             dom.appendChild(img);
         }
         else if (type == "html") {
             var iframe = document.createElement("iframe");
             iframe.style.width = "100%";
-            iframe.style.height="100%";
+            iframe.style.height = "100%";
             iframe.id = "show";
             iframe.src = "/watchFile.do?path=" + file;
             dom.appendChild(iframe);
@@ -144,8 +147,8 @@ class tree {
         } else if (txt.indexOf(type) > -1) {
             var novel = document.createElement("textarea");
             novel.id = "show";
-            novel.style.width="100%";
-            novel.style.height="100%";
+            novel.style.width = "100%";
+            novel.style.height = "100%";
             this.query("/edit.do?path=" + file, "get", null, function (data) {
                 novel.innerHTML = data;
                 dom.appendChild(novel);
@@ -159,6 +162,43 @@ class tree {
     }
 
 
+    public uploadAndSubmit() {
+        let form = document.forms["uploadForm"];
+        let path = document.getElementById("upload").name;
+        if (form["upload"].files.length > 0) {
+
+            var file = form["upload"].files[0];
+    
+            var fd=new FormData();
+            fd.append("file",file);
+            fd.append("path",path);
+            fd.append("fileName",file.name);
+           let xhr = new XMLHttpRequest();
+            xhr.open("POST","/upload.do");
+            // xhr.open("POST", "/upload.do?path=" + path + "&fileName=" + file.name);
+            //  xhr.overrideMimeType("application/octet-stream");
+
+             xhr.send(fd)
+            xhr.onreadystatechange = () => {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                console.log(xhr.response || xhr.responseText);
+                 }
+            }    
+    
+        }else{
+            alert("请选择一个文件");
+        }
+
+    }
+
+    public addClickUpload(id:string){
+    const dom=document.getElementById(id);
+    const submit = document.querySelector('#submit');
+    dom.addEventListener("click",(e)=>{
+        this.uploadAndSubmit();
+    });
+
+    }
 
     public addButtonOnclick(id: string, url: string) {
         let dom = document.getElementById(id);
@@ -172,9 +212,9 @@ class tree {
             else if (id == "but0") {  //保存。
 
                 let txt = document.getElementById("edit").value;
-                this.query(href+"&data="+txt, "post", null, (mark) => {
-                    let status=JSON.parse(mark).status;
-                    if (status== "ok") {
+                this.query(href + "&data=" + txt, "post", null, (mark) => {
+                    let status = JSON.parse(mark).status;
+                    if (status == "ok") {
                         alert("保存成功");
                     } else {
                         alert("保存失败");
@@ -205,11 +245,11 @@ class tree {
 
         this.removeDom("edit");
         this.removeDom("show");
-        var dom=document.getElementById("right");
-        let domtxt=document.createElement("textarea");
-        domtxt.id="edit";
-        domtxt.style.width="100%";
-        domtxt.style.height="100%";
+        var dom = document.getElementById("right");
+        let domtxt = document.createElement("textarea");
+        domtxt.id = "edit";
+        domtxt.style.width = "100%";
+        domtxt.style.height = "100%";
         this.query("/edit.do?path=" + file, "get", null, function (data) {
             domtxt.innerHTML = data;
             dom.appendChild(domtxt);
@@ -225,8 +265,8 @@ class tree {
         if (dom.className.indexOf("to_roate") > -1) {
             dom.className = ""; //改变样式
             e.target.src = "close.gif"; //改变图标
-            if(e.target.parentNode.parentNode.childElementCount>2)   //修改错位的东西。
-            e.target.parentNode.parentNode.lastElementChild.style.display = "none";
+            if (e.target.parentNode.parentNode.childElementCount > 2)   //修改错位的东西。
+                e.target.parentNode.parentNode.lastElementChild.style.display = "none";
             // dom.style.display = "none";  //隐藏东西
         }
         else {
@@ -288,7 +328,7 @@ class Item {
         let ulmdom = document.createElement("ul");
         ulmdom.id = pid;
         // var num = ((JSON.parse(json[0]).leave) - 1) * 3;
-        var num=0;
+        var num = 0;
         ulmdom.style.cssText = "margin-left:" + num + "px;";
         var ulhtml = '';
         for (let i = 0; i < json.length; i++) {
@@ -305,7 +345,7 @@ class Item {
             let sp0 = '<span class="file"  title=' + path + '> <i>  <img src="null.gif" class="icon"></i></span>';  //文件
             let sp1 = '<span class="to__dropdownList"  title=' + path + '> <img src="close.gif" class="icon"> </span>';  // 文件夹
             let sp2 = '<span ><img src="file.png"  class="icon" value="' + path + ' "/>  <div class="to_name" title="' + path + '">' + name + "</div></span>";
-            let sp3 = '<span >  <img  src="dir.png" class="icon">  <div class="to_name">' + name + '</div></span>';
+            let sp3 = '<span >  <img  src="dir.png" class="icon">  <div class="to_name"  title="' + path + '">' + name + '</div></span>';
 
             let temp = "";
 

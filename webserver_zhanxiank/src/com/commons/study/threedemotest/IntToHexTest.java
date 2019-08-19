@@ -1,4 +1,4 @@
-package com.commons.study.threedemo.test;
+package com.commons.study.threedemotest;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,10 +20,8 @@ public class IntToHexTest {
 		IntToHex intToHex = new IntToHex();
 		System.out.println("=====" + intToHex.int2Hex(64));  //正整数测试
 		Assert.assertEquals("40", intToHex.int2Hex(64));
-		
 		System.out.println("=====" + intToHex.int2Hex(163));
 		Assert.assertEquals("A3", intToHex.int2Hex(163));
-		
 	    String	output = intToHex.int2Hex(Integer.MAX_VALUE);		
 		Assert.assertEquals("7FFFFFFF", output);   //边界测试
 

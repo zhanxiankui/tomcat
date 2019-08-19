@@ -1,4 +1,4 @@
-package com.commons.study.threedemo.test;
+package com.commons.study.threedemotest;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,7 +27,6 @@ public class TestBinaryTree {
 		TNode t4 = bt.add(t1, "H", false);
 		TNode t5 = bt.add(t2, "C", true);
 		TNode t6 = bt.add(t2, "F", false);
-
 		Assert.assertEquals("A", bt.treeLevel(bt.getRoot(), 1));
 		Assert.assertEquals("BD", bt.treeLevel(bt.getRoot(), 2));
 		Assert.assertEquals("GHCF", bt.treeLevel(bt.getRoot(), 3));
@@ -37,7 +36,6 @@ public class TestBinaryTree {
 	public void test1() { //构造第二棵书
 
 		BinaryTree bt = new BinaryTree("A");
-
 		TNode t1 = bt.add(bt.getRoot(), "B", true);
 		TNode t2 = bt.add(bt.getRoot(), "C", false);
 		TNode t3 = bt.add(t1, "D", true);

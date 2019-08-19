@@ -1,4 +1,4 @@
-package com.commons.study.threedemo.test;
+package com.commons.study.threedemotest;
 
 import java.io.File;
 
@@ -25,7 +25,7 @@ public class FileToByteTest {
 		
 		Assert.assertEquals(14, bs.length); //正常测试
 		
-		Assert.assertNull(new FileToByte().file2buf(new File("D:/document"))); //测试目录。
+		Assert.assertNull(new FileToByte().file2buf(new File("D:/succezIDE"))); //测试目录。
 
 		Assert.assertEquals(null, new FileToByte().file2buf(null));  //测试为空。
 		

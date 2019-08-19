@@ -27,7 +27,9 @@ import com.commons.study.webserver.util.FileUtil;
 public class HttpServer implements Callable<String> {
 
 	static final Logger log = LoggerFactory.getLogger(HttpServer.class);
+
 	private Socket socket;
+
 	public HttpServer(Socket socket) {
 		this.socket = socket;
 	}
@@ -85,20 +87,16 @@ public class HttpServer implements Callable<String> {
 			}
 
 			return "success";
-			
-		}catch (Exception e) {
+
+		}
+		catch (Exception e) {
 			log.error("出现问题", e);
 			return "bad";
 		}
-         finally{
-        	 log.info("关闭连接");
-        	 socket.close();
-         }
-	
+		finally {
+			log.info("关闭连接");
+			socket.close();
+		}
 	}
-		
-	
-
-
 
 }

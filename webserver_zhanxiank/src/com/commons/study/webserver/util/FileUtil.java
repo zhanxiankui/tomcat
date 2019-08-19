@@ -1,19 +1,10 @@
 package com.commons.study.webserver.util;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,14 +14,19 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.commons.study.webserver.action.ActionShowFile;
 import com.commons.study.webserver.entity.HttpContext;
 import com.commons.study.webserver.entity.MyFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ch.qos.logback.core.LogbackException;
 
+/**
+ * 文件工具类，定义了对文件操作的函数
+ * <p>Copyright: Copyright (c) 2019</p>
+ * <p>succez</p>
+ * @author zhanxiank
+ * @createdate 2019年8月19日
+ */
 public class FileUtil {
 
 	static final Logger log = LoggerFactory.getLogger(FileUtil.class);

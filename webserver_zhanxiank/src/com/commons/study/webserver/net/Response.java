@@ -25,12 +25,10 @@ public interface Response {
 	 
 	 public void setContentType(String type);
 	 
-
 	 public void setHeader(String name, String value);
 	 
 	 public void addHeader(String name, String value);
-	 
-	 
+	  
 	 public  Map<String, String> getHeader(String name);
 	 	 	 
 	 public void setStatus(String msg);

@@ -6,14 +6,14 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ *  请求协议接口，规划化，制定标准。
+ * @return
+ */
+
 public interface Request {
 	
-	
-    
-	/**
-	 *  请求协议接口，规划化，制定标准。
-	 * @return
-	 */
 
     public String getProtocol(); 
     
@@ -39,8 +39,7 @@ public interface Request {
     public String getParameter(String name);
     
     public List<Object> getParameterValues(String name);
-    
-
+ 
     public void setAttribute(String name, Object o);
     
     public Object getAttribute(String name);

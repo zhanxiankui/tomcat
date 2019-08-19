@@ -23,7 +23,6 @@ import com.commons.study.webserver.util.FileUtil;
 public class ActionShowFile {
 
 	static final Logger log = LoggerFactory.getLogger(ActionShowFile.class);
-
 	
 	/**
 	 * 查询界面
@@ -39,7 +38,6 @@ public class ActionShowFile {
 		String parent=req.getParameter("mark");
 
 		if (cmd != null) {
-
 			try {
 				res.responseHtml(FileUtil.getDivHtml(cmd,parent));
 			}

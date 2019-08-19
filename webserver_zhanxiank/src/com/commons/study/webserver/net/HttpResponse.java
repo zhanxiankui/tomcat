@@ -18,7 +18,7 @@ import com.commons.study.threedemo.FileToByte;
 import com.commons.study.webserver.entity.HttpContext;
 
 /**
- * 相应类，返回信息给浏览器。
+ * 响应类，返回信息给浏览器。
  * <p>Copyright: Copyright (c) 2019</p>
  * <p>succez</p>
  * @author w

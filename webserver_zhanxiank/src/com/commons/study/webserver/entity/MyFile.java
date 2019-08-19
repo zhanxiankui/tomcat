@@ -102,7 +102,6 @@ public class MyFile {
 
 	@Override
 	public String toString() {
-		
 		SimpleDateFormat sfd = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		String time=sfd.format(mdtime);
 		
@@ -116,7 +115,6 @@ public class MyFile {
 		SimpleDateFormat sfd = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		String time=sfd.format(mdtime);	
 		StringBuilder  sb=new StringBuilder();
-		
 		path=path.replace("\\", "/");
 		
        sb.append("<tr> <td> <a  href="+"'" +path +"'"  + "  onclick= \"getDatas(" +"'" +path +"'"+")\" >" +path+"  </a> </td> ")

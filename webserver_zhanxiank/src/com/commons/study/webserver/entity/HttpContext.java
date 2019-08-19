@@ -10,10 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.core.util.StatusListenerConfigHelper;
 
-
-
 /**
- * 单列模型，获取一些常量。
+ * 单列模型，常量类。
  * <p>Copyright: Copyright (c) 2019</p>
  * <p>succez</p>
  * @author w
@@ -32,11 +30,10 @@ public class HttpContext {
 
 	//资源存放的路径
 	public static String webdir = HttpContext.class.getClassLoader().getResource("resource").getPath();
-	
-	public static final int  threadNums=6;   //线程池的线程数量。
-		
-	public static final String[] editTypeFile={"html","txt","js","css","xml"};  //可以编辑的文件类型。
-	
+
+	public static final int threadNums = 6; //线程池的线程数量。
+
+	public static final String[] editTypeFile = { "html", "txt", "js", "css", "xml" }; //可以编辑的文件类型。
 
 	private HttpContext() {
 		loadPropeyty();
@@ -61,12 +58,11 @@ public class HttpContext {
 		InputStream in = null;
 		InputStream ins = null;
 		try {
-
 			in = HttpContext.class.getClassLoader().getResourceAsStream("conf/contenttype.properties");
 			p.load(in);
 			ins = HttpContext.class.getClassLoader().getResourceAsStream("conf/statas.properties");
 			p1.load(ins);
-		log.debug("加载配置文件{},{}成功", p, p1);
+			log.debug("加载配置文件{},{}成功", p, p1);
 
 		}
 		catch (FileNotFoundException e) {

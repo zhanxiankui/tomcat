@@ -44,7 +44,6 @@ public class TestBinaryTree {
 		TNode t6 = bt.add(t2, "G", false);
 		TNode t7 = bt.add(t3, "H", true);
 		TNode t8 = bt.add(t3, "J", false);
-
 		Assert.assertEquals("A", bt.treeLevel(bt.getRoot(), 1));
 		Assert.assertEquals("BC", bt.treeLevel(bt.getRoot(), 2));
 		Assert.assertEquals("DEFG", bt.treeLevel(bt.getRoot(), 3));

@@ -3,6 +3,14 @@ package com.commons.study.threedemo;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
+/**
+ *    二叉树操作类，对二叉树进行一系列的操作。
+ * <p>Copyright: Copyright (c) 2019</p>
+ * <p>succez</p>
+ * @author zhanxiank
+ * @createdate 2019年8月19日
+ */
+
 public class BinaryTree {
 
 	private TNode root;
@@ -27,17 +35,14 @@ public class BinaryTree {
 	 */
 
 	public TNode add(TNode parent, String value, boolean isleft) {
-
 		if (parent == null || parent.value == null) {
 			throw new RuntimeException("结点为空，不能添加");
 		}
 		TNode tNode = new TNode(value);
 		if (isleft) {
-
 			parent.left = tNode;
 		}
 		else {
-
 			parent.right = tNode;
 		}
 
@@ -45,7 +50,6 @@ public class BinaryTree {
 	}
 
 	public String getValue(TNode node) {
-
 		return node.value;
 	}
 
@@ -54,7 +58,6 @@ public class BinaryTree {
 	}
 
 	public TNode getRoot() {
-
 		return root;
 	}
 
@@ -69,7 +72,6 @@ public class BinaryTree {
 		TNode temp;
 		queue.add(root);
 		int leavenum = 0;
-
 		while (!queue.isEmpty()) {
 			leavenum = queue.size(); //上一层结点个数
 			while (leavenum > 0) {
@@ -81,7 +83,6 @@ public class BinaryTree {
 				if (count > level) {
 					break;
 				}
-
 				if (temp.left != null) {
 					queue.add(temp.left);
 				}
@@ -94,7 +95,6 @@ public class BinaryTree {
 		}
 
 		return sb.toString();
-
 	}
 
 }

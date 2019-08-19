@@ -35,7 +35,6 @@ public class IntToHex {
 			sb.append(num2Char(mark));
 			temp = num / targ;
 		}
-
 		return sb.reverse().toString();
 	}
 
@@ -49,7 +48,6 @@ public class IntToHex {
 		if (n < 10) {
 			return String.valueOf(n);
 		}
-
 		return String.valueOf((char) (n + 55));
 
 	}

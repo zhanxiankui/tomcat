@@ -22,13 +22,9 @@ public class FileToByteTest {
 	public void test() throws Exception {  //正确的文件
 		
 		byte[] bs = new FileToByte().file2buf(getFiles("test.txt"));
-		
 		Assert.assertEquals(14, bs.length); //正常测试
-		
 		Assert.assertNull(new FileToByte().file2buf(new File("D:/succezIDE"))); //测试目录。
-
 		Assert.assertEquals(null, new FileToByte().file2buf(null));  //测试为空。
-		
 		Assert.assertEquals(null, new FileToByte().file2buf(getFiles("a.txt")));
 	}
 

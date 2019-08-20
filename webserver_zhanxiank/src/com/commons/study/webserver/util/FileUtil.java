@@ -61,7 +61,8 @@ public class FileUtil {
 
 		File[] files = file.listFiles();
 		if (files == null) { //有些隐藏文件属性很诡异，忽略
-			files = new File("D:/succezIDE").listFiles();
+			return filelist;
+//			files = new File("D:/succezIDE").listFiles();
 		}
 
 		for (File f : files) {

@@ -91,8 +91,8 @@ class tree {
                     self.setbuttonName(file, "but");  //编辑button
                     self.setbuttonName(file, "but0");  //保存button
                     self.setbuttonName(file, "but1");  //下载button
-                    self.setbuttonName(file,"upload");  //上传文件
-            
+                    self.setbuttonName(file, "upload");  //上传文件
+
                 }
 
             }
@@ -116,15 +116,15 @@ class tree {
 
         var dom = document.getElementById("right");
         var file = e.target.title;
-        let index = file.indexOf(".");
+        let index = file.lastIndexOf(".");  //取最后出现的字符
 
         if (index == -1) {
             return;  //不查看
         }
 
-        let type = file.substring(index + 1).trim();
+        let type = file.substring(index + 1).trim().toLowerCase();
         let arrimg = ["gif", "bmp", "jpg", "png", "ico"];
-        let txt = ["txt", "xml", "json", "css", "js"];
+        let txt = ["txt", "xml", "json", "css", "js", "ts","log"];
 
         this.removeDom("edit");
         this.removeDom("show"); //移除已经存在的dom结构
@@ -149,6 +149,7 @@ class tree {
             novel.id = "show";
             novel.style.width = "100%";
             novel.style.height = "100%";
+            novel.style.background="beige;";
             this.query("/edit.do?path=" + file, "get", null, function (data) {
                 novel.innerHTML = data;
                 dom.appendChild(novel);
@@ -168,35 +169,35 @@ class tree {
         if (form["upload"].files.length > 0) {
 
             var file = form["upload"].files[0];
-    
-            var fd=new FormData();
-            fd.append("file",file);
-            fd.append("path",path);
-            fd.append("fileName",file.name);
-           let xhr = new XMLHttpRequest();
-            xhr.open("POST","/upload.do");
-            // xhr.open("POST", "/upload.do?path=" + path + "&fileName=" + file.name);
-            //  xhr.overrideMimeType("application/octet-stream");
 
-             xhr.send(fd)
+            var fd = new FormData();
+            fd.append("file", file);
+            fd.append("path", path);
+            fd.append("fileName", file.name);
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", "/upload.do");
+            // xhr.open("POST", "/upload.do?path=" + path + "&fileName=" + file.name);
+            xhr.overrideMimeType("application/octet-stream");
+
+            xhr.send(fd)
             xhr.onreadystatechange = () => {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                console.log(xhr.response || xhr.responseText);
-                 }
-            }    
-    
-        }else{
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    console.log(xhr.response || xhr.responseText);
+                }
+            }
+
+        } else {
             alert("请选择一个文件");
         }
 
     }
 
-    public addClickUpload(id:string){
-    const dom=document.getElementById(id);
-    const submit = document.querySelector('#submit');
-    dom.addEventListener("click",(e)=>{
-        this.uploadAndSubmit();
-    });
+    public addClickUpload(id: string) {
+        const dom = document.getElementById(id);
+        const submit = document.querySelector('#submit');
+        dom.addEventListener("click", (e) => {
+            this.uploadAndSubmit();
+        });
 
     }
 
@@ -235,8 +236,8 @@ class tree {
 
 
     public eidt(file: string) { //编辑文件
-        let txt = ["txt", "xml", "json", "html"];
-        let type = file.substring(file.indexOf(".") + 1).trim();
+        let txt = ["txt", "xml", "json", "html", "ts"];
+        let type = file.substring(file.lastIndexOf(".") + 1).trim().toLowerCase();
 
         if (txt.indexOf(type) == -1) {
             alert("网页不能编辑的类型");
@@ -254,7 +255,6 @@ class tree {
             domtxt.innerHTML = data;
             dom.appendChild(domtxt);
         });
-
     }
 
     public dropClick(e: any) {  //点击事件。
@@ -340,12 +340,12 @@ class Item {
             let path = j.path;
             var item = new Item(pid, id, name, isdir, leave);
             this.setPath(path); //路径
-            arry.push(item);
+            arry.push(item);    //需要考虑有空格和中文的问题
 
-            let sp0 = '<span class="file"  title=' + path + '> <i>  <img src="null.gif" class="icon"></i></span>';  //文件
-            let sp1 = '<span class="to__dropdownList"  title=' + path + '> <img src="close.gif" class="icon"> </span>';  // 文件夹
-            let sp2 = '<span ><img src="file.png"  class="icon" value="' + path + ' "/>  <div class="to_name" title="' + path + '">' + name + "</div></span>";
-            let sp3 = '<span >  <img  src="dir.png" class="icon">  <div class="to_name"  title="' + path + '">' + name + '</div></span>';
+            let sp0 = '<span class="file"  title=' + path + '> <i>  <img src="null.gif" class="expandimg"></i></span>';  //文件
+            let sp1 = '<span class="to__dropdownList"   title="' + path + '"><img src="close.gif" class="expandimg"> </span>';  // 文件夹
+            let sp2 = '<span style="margin-left: 5px;" ><img src="file.png"  class="icon" value="' + path + ' "/>  <div class="to_name" title="' + path + '">' + name + "</div></span>";
+            let sp3 = '<span > <img  src="dir.png" class="icon">  <div class="to_name"  title="' + path + '">' + name + '</div></span>';
 
             let temp = "";
 

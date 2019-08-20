@@ -37,8 +37,13 @@
 
     <script>
         window.onload = function () {
+            var url=window.location.href;
+            if(url.indexOf("@")){
+                url=url.substring(0,url.length-1);
+            }   
             var t = new tree("id0", 0);
-            t.init("/show.do?path=d:/", "post", null);
+            t.init(url, "post", null);
+            // "/show.do?path=d:/"
         }
     </script>
 </body>

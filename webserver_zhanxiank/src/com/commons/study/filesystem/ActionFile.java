@@ -57,7 +57,6 @@ public class ActionFile {
 			}
 			else { //下一级目录为空				
 				//				sb.add(FileUtil.getJsonInfo(fle));
-
 				return;
 			}
 
@@ -116,7 +115,6 @@ public class ActionFile {
 			return; //不能编辑的不处理。
 		}
 		response.responseHtml(FileUtil.fileToString(FileUtil.getRealFileLocate(path)));
-
 	}
 
 	//upload.do?path
@@ -127,7 +125,7 @@ public class ActionFile {
 		BufferedInputStream bfiput=new BufferedInputStream(request.getInputStream());
 		String fileName=request.getParameter("fileName");
 		byte[] buf=new byte[1024];
-		
+
 		File file=new File(obj+fileName);
 		BufferedOutputStream bos=new BufferedOutputStream(new FileOutputStream(file));
 		try{

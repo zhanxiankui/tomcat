@@ -2,6 +2,7 @@ package com.commons.study.filesystem;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -56,7 +57,7 @@ public class ActionFile {
 				}
 			}
 			else { //下一级目录为空				
-				//				sb.add(FileUtil.getJsonInfo(fle));
+						//				sb.add(FileUtil.getJsonInfo(fle));
 				return;
 			}
 
@@ -84,7 +85,6 @@ public class ActionFile {
 		; //返回保存的状态
 	}
 
-	
 	///watchFile.do
 	public void watchFile(Object path) throws IOException {
 		String url = String.valueOf(path);
@@ -92,7 +92,6 @@ public class ActionFile {
 		response.getStaticResource(contentype, url);
 	}
 
-	
 	//download.do?path=
 	public void download(Object path) throws Exception {
 		log.info("{} 开始下载文件", new Date());
@@ -119,25 +118,75 @@ public class ActionFile {
 
 	//upload.do?path
 	public void upload(Object obj) throws IOException {
-		log.info("上传文件 {}",obj);
-		
-		
-		BufferedInputStream bfiput=new BufferedInputStream(request.getInputStream());
-		String fileName=request.getParameter("fileName");
-		byte[] buf=new byte[1024];
+		log.info("上传文件 {}", obj);
+		String body = request.getRequestbody(); //body数据。
+		String contentType = request.getHeader().get("content-type");
+		boolean cond = contentType != null && contentType.startsWith("multipart/form-data");
 
-		File file=new File(obj+fileName);
-		BufferedOutputStream bos=new BufferedOutputStream(new FileOutputStream(file));
-		try{
-		int read=-1;
-		while ((read=bfiput.read(buf))!=-1) {
-			bos.write(buf, 0, read);	
+		if ("POST".equals(request.getRequestMethod()) && body != null && cond) { //POST请求，Content-type为 multipart/form-data 
+
+			String boundary = contentType.substring(contentType.indexOf("boundary") + "boundary=".length());
+			String[] str = body.split("\r\n");
+			int c = 0;
+			while (c < str.length) {
+				do {
+					String temp = null; //文件上传 的头部
+					if (str[c] != null && str[c].indexOf("Content-Disposition:") >= 0
+							&& str[c].indexOf("filename") > 0) {
+						temp = str[c].substring("Content-Disposition:".length());
+						String[] strs = str[c].split(";");
+						String fileName = strs[strs.length - 1].replace("\"", "").split("=")[1];
+						c = c + 2; //一行是Content-Type,一行是换行 
+
+						DataOutputStream fio = null; //这一行是换行 ,正式去读文件的内容 
+						try{
+						fio = new DataOutputStream(
+								new BufferedOutputStream(new FileOutputStream(new File("D:\\" + fileName))));
+						while (true) {
+							c++;
+							if (str[c].startsWith("--" + boundary)) { //下一个普通表单了。
+								break;
+							}
+							temp = str[c];
+							fio.write(temp.getBytes("ISO-8859-1"));
+							fio.write("\r\n".getBytes("ISO-8859-1"));
+							//fio.writeBytes(str);
+							//fio.writeBytes("\r\n");
+						}
+						
+						}finally {
+							fio.close();
+						}
+
+					}
+					
+					if (str[c]!=null&&str[c].indexOf("Content-Disposition:") >= 0){  //普通表单
+						Map<String,String>  map=new HashMap<>();
+						temp = str[c].substring("Content-Disposition:".length());
+						String[] strs = temp.split(";");
+						String name = strs[strs.length - 1].replace("\"", "").split("=")[1];
+						c++;  //空格。						
+						while (true) {
+							c++;
+							if (str[c].startsWith("--" + boundary)) {
+								break;
+							}							
+							map.put(name, str[c]);
+						}
+				
+					}
+					
+				}
+				while (("--" + boundary).equals(str));
+				//解析结束 
+				if (str.equals("--" + boundary + "--")) {
+					break;
+				}
+
+			}
+
 		}
-		
-		}finally {
-			bos.close();
-		}
-	
+
 	}
 
 	public HttpRequest getRequest() {

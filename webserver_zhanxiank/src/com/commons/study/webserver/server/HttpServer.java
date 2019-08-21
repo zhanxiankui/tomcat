@@ -51,7 +51,7 @@ public class HttpServer implements Callable<String> {
 		}
 	}
 
-	public synchronized String server() throws IOException {
+	public  String server() throws IOException {
 
 		InputStream inputStream = socket.getInputStream();
 		HttpRequest req = new HttpRequest(inputStream);

@@ -27,7 +27,7 @@ public interface Request {
 
     public String getCharacterEncoding();
     
-    public Map<String, String> getHeader(String name);
+    public Map<String, String> getHeader();
     
     public String getMethod();
     

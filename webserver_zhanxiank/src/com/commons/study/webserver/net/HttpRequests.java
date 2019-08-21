@@ -21,7 +21,7 @@ import com.commons.study.webserver.entity.HttpContext;
  * @createdate 2019年8月6日
  */
 
-public class HttpRequest implements Request {
+public class HttpRequests implements Request {
 
 	private InputStream inputstream; //输入流
 
@@ -49,7 +49,7 @@ public class HttpRequest implements Request {
 
 	static final Logger log = LoggerFactory.getLogger(HttpRequest.class);
 
-	public HttpRequest(InputStream input) throws IOException {
+	public HttpRequests(InputStream input) throws IOException {
 		this.inputstream = input;
 		this.parametes = new HashMap<String, List<Object>>();
 		this.header = new HashMap<String, String>();

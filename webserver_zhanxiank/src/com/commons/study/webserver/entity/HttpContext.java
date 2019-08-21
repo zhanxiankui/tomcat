@@ -32,6 +32,10 @@ public class HttpContext {
 	public static String webdir = HttpContext.class.getClassLoader().getResource("resource").getPath();
 
 	public static final int threadNums = 6; //线程池的线程数量。
+	
+	public  static final String Encoder="ISO_8859_1";
+	
+	public static final  String  UTF8="UTF-8";
 
 	public static final String[] editTypeFile = { "html", "txt", "js", "css", "xml" }; //可以编辑的文件类型。
 

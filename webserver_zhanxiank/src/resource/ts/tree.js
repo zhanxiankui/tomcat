@@ -83,13 +83,13 @@ var tree = /** @class */ (function () {
         // this.query("/watchFile.do?path="+e.path[2].title,"get",null,function(data){ 
         var dom = document.getElementById("right");
         var file = e.target.title;
-        var index = file.indexOf(".");
+        var index = file.lastIndexOf("."); //取最后出现的字符
         if (index == -1) {
             return; //不查看
         }
-        var type = file.substring(index + 1).trim();
+        var type = file.substring(index + 1).trim().toLowerCase();
         var arrimg = ["gif", "bmp", "jpg", "png", "ico"];
-        var txt = ["txt", "xml", "json", "css", "js"];
+        var txt = ["txt", "xml", "json", "css", "js", "ts", "log"];
         this.removeDom("edit");
         this.removeDom("show"); //移除已经存在的dom结构
         if (arrimg.indexOf(type) > -1) {
@@ -113,6 +113,7 @@ var tree = /** @class */ (function () {
             novel.id = "show";
             novel.style.width = "100%";
             novel.style.height = "100%";
+            novel.style.background = "beige;";
             this.query("/edit.do?path=" + file, "get", null, function (data) {
                 novel.innerHTML = data;
                 dom.appendChild(novel);
@@ -128,13 +129,13 @@ var tree = /** @class */ (function () {
         if (form["upload"].files.length > 0) {
             var file = form["upload"].files[0];
             var fd = new FormData();
-            fd.append("file", file);
             fd.append("path", path);
             fd.append("fileName", file.name);
+            fd.append("file", file);
             var xhr_1 = new XMLHttpRequest();
             xhr_1.open("POST", "/upload.do");
             // xhr.open("POST", "/upload.do?path=" + path + "&fileName=" + file.name);
-            //  xhr.overrideMimeType("application/octet-stream");
+            xhr_1.overrideMimeType("application/octet-stream");
             xhr_1.send(fd);
             xhr_1.onreadystatechange = function () {
                 if (xhr_1.readyState == 4 && xhr_1.status == 200) {
@@ -185,8 +186,8 @@ var tree = /** @class */ (function () {
         dom.name = data;
     };
     tree.prototype.eidt = function (file) {
-        var txt = ["txt", "xml", "json", "html"];
-        var type = file.substring(file.indexOf(".") + 1).trim();
+        var txt = ["txt", "xml", "json", "html", "ts"];
+        var type = file.substring(file.lastIndexOf(".") + 1).trim().toLowerCase();
         if (txt.indexOf(type) == -1) {
             alert("网页不能编辑的类型");
             return;
@@ -266,11 +267,11 @@ var Item = /** @class */ (function () {
             var path = j.path;
             var item = new Item(pid, id, name_1, isdir, leave);
             this.setPath(path); //路径
-            arry.push(item);
-            var sp0 = '<span class="file"  title=' + path + '> <i>  <img src="null.gif" class="icon"></i></span>'; //文件
-            var sp1 = '<span class="to__dropdownList"  title=' + path + '> <img src="close.gif" class="icon"> </span>'; // 文件夹
-            var sp2 = '<span ><img src="file.png"  class="icon" value="' + path + ' "/>  <div class="to_name" title="' + path + '">' + name_1 + "</div></span>";
-            var sp3 = '<span >  <img  src="dir.png" class="icon">  <div class="to_name"  title="' + path + '">' + name_1 + '</div></span>';
+            arry.push(item); //需要考虑有空格和中文的问题
+            var sp0 = '<span class="file"  title=' + path + '> <i>  <img src="null.gif" class="expandimg"></i></span>'; //文件
+            var sp1 = '<span class="to__dropdownList"   title="' + path + '"><img src="close.gif" class="expandimg"> </span>'; // 文件夹
+            var sp2 = '<span style="margin-left: 5px;" ><img src="file.png"  class="icon" value="' + path + ' "/>  <div class="to_name" title="' + path + '">' + name_1 + "</div></span>";
+            var sp3 = '<span > <img  src="dir.png" class="icon">  <div class="to_name"  title="' + path + '">' + name_1 + '</div></span>';
             var temp = "";
             if (isdir) {
                 temp = '<li id="' + leave + name_1 + '">' + sp1 + sp3 + '</li>'; //文件夹的处理

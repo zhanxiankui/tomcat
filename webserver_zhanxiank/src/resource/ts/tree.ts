@@ -22,7 +22,6 @@ class tree {
 
         });
 
-
     }
 
     public getDom() {
@@ -169,11 +168,10 @@ class tree {
         if (form["upload"].files.length > 0) {
 
             var file = form["upload"].files[0];
-
             var fd = new FormData();
-            fd.append("file", file);
             fd.append("path", path);
             fd.append("fileName", file.name);
+            fd.append("file", file);
             let xhr = new XMLHttpRequest();
             xhr.open("POST", "/upload.do");
             // xhr.open("POST", "/upload.do?path=" + path + "&fileName=" + file.name);

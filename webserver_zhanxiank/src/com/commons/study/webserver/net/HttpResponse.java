@@ -115,6 +115,8 @@ public class HttpResponse implements Response {
 		setContentType(contentType);
 		if (file.exists() && file.isFile()) {
 			status = status + " " + httpContext.getStats(status);
+			
+//			outputStream.write("hello".getBytes());
 			writeHeader(contentType, status);
 			writeFile(file);
 		}
@@ -158,14 +160,13 @@ public class HttpResponse implements Response {
 		log.info("返回头部信息{} ", responseHeader);
 		try {
 			outputStream.write(first.getBytes());
-			outputStream.write("accept-ranges: bytes \r\n".getBytes());
+//			outputStream.write("accept-ranges: bytes \r\n".getBytes());
 			outputStream.write(responseHeader.getBytes());
 			outputStream.write("\r\n".getBytes());
 		}
 		catch (Exception e) {
 			log.error("头部信息输出出错: {}", e);
 		}
-
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 
 
 class tree {
-
     id: string;
     leave: number;
 
@@ -12,7 +11,6 @@ class tree {
 
     public init(url: string, way: string, path: string) {
         this.query(url, way, path, (data: any) => {
-
             this.addRootItem(data, this.getDom());
             this.domClick();
             this.addButtonOnclick("but", "/edit.do");  //编辑
@@ -38,15 +36,12 @@ class tree {
     * @param result 
     */
 
-    public query(url: string, method: string, data: string, result: Function) {
+    public query(url: string, method: string, data: any, result: Function) {
         const xhr = new XMLHttpRequest();  //创建对象
-
         xhr.open(method, url, true);   //true异步请求，false同步
-
         if (method == "post") {
-            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); //请求头部
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded;charset=UTF-8"); //请求头部
         }
-
         xhr.send(data);
         xhr.onreadystatechange = () => {   //回调函数
             if (xhr.readyState == 4 && xhr.status == 200) {
@@ -71,27 +66,26 @@ class tree {
         var dom = document.getElementsByTagName("span");
         for (let i = 0; i < dom.length; i++) {
             var self = this;
-
             dom[i].onclick = (e) => {
                 var subItem = e.path;
                 if (subItem == null) {
                     return;
                 }
+                this.setSelected(e);
                 let txt = e.target.innerHTML; //点击文件名
                 // let className = subItem[2].className;  //展开和伸缩。
                 let className = e.target.parentNode.className;
-
                 if (className == "to__dropdownList") {  //文件夹才会展开。
                     this.dropClick(e);
                 }
                 if (txt != null && txt != "") {         //查看文件，点击文件名字。
+                    this.setSelected(e); //被选择
                     this.seeFile(e);
                     let file = e.target.title;  //路径
                     self.setbuttonName(file, "but");  //编辑button
                     self.setbuttonName(file, "but0");  //保存button
                     self.setbuttonName(file, "but1");  //下载button
                     self.setbuttonName(file, "upload");  //上传文件
-
                 }
 
             }
@@ -112,22 +106,23 @@ class tree {
 
     public seeFile(e) {  //查看文件
         // this.query("/watchFile.do?path="+e.path[2].title,"get",null,function(data){ 
-
-        var dom = document.getElementById("right");
-        var file = e.target.title;
-        let index = file.lastIndexOf(".");  //取最后出现的字符
-
-        if (index == -1) {
-            return;  //不查看
-        }
-
-        let type = file.substring(index + 1).trim().toLowerCase();
-        let arrimg = ["gif", "bmp", "jpg", "png", "ico"];
-        let txt = ["txt", "xml", "json", "css", "js", "ts","log"];
-
         this.removeDom("edit");
         this.removeDom("show"); //移除已经存在的dom结构
+        var file = e.target.title;
+        let index = file.lastIndexOf(".");  //取最后出现的字符
+        if (index == -1) {
+            this.showButton("no", "folder"); //文件取消按钮
+            this.showMessage("", false, true);
+            return;  //不查看
+        }
+        this.showMessage(file, true, true);
+        var dom = document.getElementById("right");
+        let type = file.substring(index + 1).trim().toLowerCase();
+        const arrimg = ["gif", "bmp", "jpg", "png", "ico"];
+        const txt = ["txt", "xml", "json", "css", "js", "ts", "log"];
+
         if (arrimg.indexOf(type) > -1) {
+            this.showButton("no");
             var img = document.createElement("img");
             img.id = "show";
             img.style.width = "100%";
@@ -136,31 +131,79 @@ class tree {
             dom.appendChild(img);
         }
         else if (type == "html") {
+            this.showButton("edit");
             var iframe = document.createElement("iframe");
             iframe.style.width = "100%";
             iframe.style.height = "100%";
             iframe.id = "show";
             iframe.src = "/watchFile.do?path=" + file;
             dom.appendChild(iframe);
-
         } else if (txt.indexOf(type) > -1) {
+            this.showButton("edit");
             var novel = document.createElement("textarea");
             novel.id = "show";
-            novel.style.width = "100%";
+            novel.style.width = "99%";
             novel.style.height = "100%";
-            novel.style.background="beige;";
+            novel.style.background = "beige;";
             this.query("/edit.do?path=" + file, "get", null, function (data) {
                 novel.innerHTML = data;
                 dom.appendChild(novel);
             });
-
         }
         else {
-            alert("网页不能查看的文件类型");
+            this.showButton("no");
+            this.showMessage(file, true);
         }
-
     }
 
+
+    public showMessage(message: string, isSee: boolean, can?: boolean) {
+
+        if (message.indexOf("\\") > -1) {
+            let mesarr=message.split("\\");
+            message = mesarr[mesarr.length - 1]; //是文件只取名字
+        }
+        var pdom = document.getElementById("editfiles");
+        if (can) {
+            pdom.innerHTML = message;
+            return;
+        }
+        if (isSee) {
+            pdom.innerHTML = '<b style="color: red;">' + message + " 网页不能查看的文件类型" + "</b>";
+        } else {
+            pdom.innerHTML = '<b style="color: red;">' + message + " 网页不能编辑的文件类型" + "</b>";
+        }
+    }
+
+    public showButton(type: string, mark?: string) {
+        var saveBut = document.getElementById("but0"); //保存
+        var savattr = saveBut.style.display;
+        var dwlBut = document.getElementById("but1"); //下载
+        var dwlattr = dwlBut.style.display;
+        if (dwlattr == "none") {
+            dwlBut.style.display = "inline-block";
+        }
+        var editBut = document.getElementById("but");
+        var edtattr = editBut.style.display;
+        if (type == "edit") {   //编辑
+            editBut.style.display = "inline-block";
+            saveBut.style.display = "none";
+
+        } else {
+            if (edtattr == "inline-block")
+                editBut.style.display = "none";
+            if (savattr == "inline-block") {
+                saveBut.style.display = "none";
+            }
+            if (mark == "folder") {   //文件夹下载按钮也隐藏了。
+                dwlBut.style.display = "none";
+            }
+        }
+
+        if (mark == "edit") {   //点击了编辑才有保存按钮。
+            saveBut.style.display = "inline-block";
+        }
+    }
 
     public uploadAndSubmit() {
         let form = document.forms["uploadForm"];
@@ -204,14 +247,14 @@ class tree {
         dom.addEventListener("click", (e) => {
             let dom = document.getElementById(id);
             let href = url + "?path=" + dom.name;
-
             if (id == "but") {    //编辑
+                dom.title = "edit";
                 this.eidt(dom.name);
             }
             else if (id == "but0") {  //保存。
-
                 let txt = document.getElementById("edit").value;
-                this.query(href + "&data=" + txt, "post", null, (mark) => {
+                let data="path=" + dom.name+ "&data="+encodeURIComponent(txt)
+                this.query(url, "post", data , (mark) => {
                     let status = JSON.parse(mark).status;
                     if (status == "ok") {
                         alert("保存成功");
@@ -227,21 +270,21 @@ class tree {
 
     }
 
-    public setbuttonName(data: string, id: string) {
+    public setbuttonName(data: string, id: string) {   //修改一下button的属性
         let dom = document.getElementById(id);
         dom.name = data;
     }
 
 
     public eidt(file: string) { //编辑文件
-        let txt = ["txt", "xml", "json", "html", "ts"];
+        const txt = ["txt", "xml", "json", "html", "ts", "js"];
         let type = file.substring(file.lastIndexOf(".") + 1).trim().toLowerCase();
-
         if (txt.indexOf(type) == -1) {
-            alert("网页不能编辑的类型");
+            this.showMessage(file, false);
             return;
         }
-
+        this.showMessage(file, false, true);
+        this.showButton("edit", "edit");
         this.removeDom("edit");
         this.removeDom("show");
         var dom = document.getElementById("right");
@@ -256,7 +299,6 @@ class tree {
     }
 
     public dropClick(e: any) {  //点击事件。
-        // let id = e.path[3].id;
         let id = e.target.parentNode.parentNode.id;
         let dom = document.getElementById(id);  //li的dom;
         // 切换样式状态
@@ -270,29 +312,46 @@ class tree {
         else {
             dom.className = "to_roate";
             e.target.src = "expend.gif";
-            // e.path[3].style.display = "block"; //显示。
             e.target.parentNode.parentNode.lastElementChild.style.display = "block";
             e.target.parentNode.nextElementSibling.style.display = "inline-block";  //防止图标错位。
         }
-
         if (Number(e.target.parentNode.parentNode.childElementCount) > 2) {  //结点已经存在
-
             return;
         }
-
         this.query("/show.do?path=" + e.target.parentNode.title, "get", null, function (data) {  //追加结点
+            var json = JSON.parse(data);
+            if (json.length == 1 && json[0] == "nofile") {  //下级目录没有文件不做处理
+                e.target.src = "close.gif";  //打开状态
+                return;
+            }
             var item = new Item(id, "", "", true, 0);
             item.addTreeItem(id, "", data, dom);
         });
 
     }
 
+
+
+
+    public setSelected(e) {   //被选中 
+        let selid = "selected";
+        let existdom = document.getElementById(selid);
+        if (existdom) {
+            existdom.removeAttribute("id");
+            existdom.style.background = "";
+        }
+        let node = e.target.parentNode;
+        if (e.target.nodeName == "DIV") {
+            node.style.background = "rgb(173, 170, 170)"; //选中的背景颜色
+            node.setAttribute("id", selid);; //清楚这个背景需要的id。
+        }
+    }
 }
 
 
 
-class Item {
 
+class Item {
     parentid: string;
     id: string; //id 标签。
     name: string;
@@ -300,7 +359,6 @@ class Item {
     path: string = "d:/";
     leave: number;
     isExpend: boolean = false;
-
 
     constructor(parentid: string, id: string, name: string, isdir: boolean, leave: number) {
         this.parentid = parentid;
@@ -310,7 +368,6 @@ class Item {
         this.leave = leave;
     }
 
-
     public setPath(path: string) {
         this.path = path;
     }
@@ -319,18 +376,16 @@ class Item {
         if (data == null) {
             return;
         }
-
         let t = new tree(null, 0);  //使用对象，
         var arry = new Array();
         var json = JSON.parse(data);
         let ulmdom = document.createElement("ul");
         ulmdom.id = pid;
         // var num = ((JSON.parse(json[0]).leave) - 1) * 3;
-        var num = 0;
+        var num = -16;
         ulmdom.style.cssText = "margin-left:" + num + "px;";
         var ulhtml = '';
         for (let i = 0; i < json.length; i++) {
-
             let j = JSON.parse(json[i]);
             let name = j.name;
             let isdir = j.isdir == "true";
@@ -346,7 +401,6 @@ class Item {
             let sp3 = '<span > <img  src="dir.png" class="icon">  <div class="to_name"  title="' + path + '">' + name + '</div></span>';
 
             let temp = "";
-
             if (isdir) {
                 temp = '<li id="' + leave + name + '">' + sp1 + sp3 + '</li>'; //文件夹的处理
             } else {

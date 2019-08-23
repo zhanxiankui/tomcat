@@ -18,9 +18,9 @@
         <div style="height: 76px;border-bottom:1px solid grey;"> 
 
             <div style="float: left">
-            <input id="but" class="button" type="button" value="编辑"></input> 
-            <input id="but0" class="button" type="button" value="保存"></input> 
-            <input id="but1" class="button" type="button" value="下载"></input> 
+            <input id="but1" class="button" type="button" value="下载" style="display: none; margin-left: 13px;"></input> 
+            <input id="but" class="button" type="button" value="编辑" style=" display: none;"></input> 
+            <input id="but0" class="button" type="button" value="保存" style="display: none"></input> 
             <!-- <input id="but2" class="button" type="button" value="上传"></input> s -->
         </div>
         
@@ -33,6 +33,7 @@
             </form>
         </div>
         </div>
+        <p id="editfiles" style="text-align: center;"></p>
     </div>
 
     <script>
@@ -42,7 +43,7 @@
                 url=url.substring(0,url.length-1);
             }   
             var t = new tree("id0", 0);
-            t.init(url, "post", null);
+            t.init(url, "get", null);
             // "/show.do?path=d:/"
         }
     </script>

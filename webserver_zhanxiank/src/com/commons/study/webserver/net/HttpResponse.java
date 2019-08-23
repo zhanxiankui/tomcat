@@ -115,7 +115,6 @@ public class HttpResponse implements Response {
 		setContentType(contentType);
 		if (file.exists() && file.isFile()) {
 			status = status + " " + httpContext.getStats(status);
-			
 //			outputStream.write("hello".getBytes());
 			writeHeader(contentType, status);
 			writeFile(file);
@@ -124,8 +123,7 @@ public class HttpResponse implements Response {
 			status = "404" + " " + httpContext.getStats("404");
 			writeHeader(contentType, status);
 			writeFile(new File(HttpContext.webdir+"/"+  "404.html"));
-		}
-		  
+		}	  
 	
 	}
 

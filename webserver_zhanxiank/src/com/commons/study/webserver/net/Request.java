@@ -17,13 +17,11 @@ public interface Request {
 
     public String getProtocol(); 
     
-    
     public String getContentType();
     
     public void setContentType(String value);
     
-    public void setCharacterEncoding(String env)
-            throws java.io.UnsupportedEncodingException;
+    public void setCharacterEncoding(String env);
 
     public String getCharacterEncoding();
     
@@ -35,11 +33,8 @@ public interface Request {
         
     public InputStream getInputStream() throws IOException;
     
-
     public String getParameter(String name);
-    
-    public List<Object> getParameterValues(String name);
- 
+  
     public void setAttribute(String name, Object o);
     
     public Object getAttribute(String name);

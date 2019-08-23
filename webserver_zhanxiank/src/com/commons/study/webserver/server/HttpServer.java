@@ -35,7 +35,7 @@ public class HttpServer implements Callable<String> {
 	}
 
 	@Override
-	public String call() throws IOException {
+	public String call() throws Exception {
 
 		try {
 			return server();
@@ -51,7 +51,7 @@ public class HttpServer implements Callable<String> {
 		}
 	}
 
-	public  String server() throws IOException {
+	public  String server() throws Exception {
 
 		InputStream inputStream = socket.getInputStream();
 		HttpRequest req = new HttpRequest(inputStream);

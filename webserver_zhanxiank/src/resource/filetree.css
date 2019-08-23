@@ -69,7 +69,7 @@ span {
 
 
 .leftdiv{
-    width: 36%;
+    width: 30%;
     /* height: 90%; */
     height: 680px;
     border-right: 1px solid grey;
@@ -81,10 +81,10 @@ span {
 
 /*页面布局左侧div样式*/
 .rightDiv {
-  width: 66%;
+  width: 69%;
   /* height: 90%; */
   height: 680px;
-  left: 36%;
+  left: 30%;
   position: absolute;
   border-left: 2px solid grey;
   overflow: scroll;

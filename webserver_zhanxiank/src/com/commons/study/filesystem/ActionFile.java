@@ -6,6 +6,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -26,15 +27,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ActionFile {
 
 	private HttpRequest request;
-
 	private HttpResponse response;
-
 	private static final Logger log = LoggerFactory.getLogger(ActionFile.class);
 
 	//show.do?path=c/
 	public void show(Object pa) throws IOException {
-
 		String path = String.valueOf(pa);
+		ObjectMapper mapper = new ObjectMapper();
 		int index = String.valueOf(path).indexOf("@"); //这是初始化的标志。
 		if (index != -1) {
 			path = path.substring(0, index);
@@ -45,7 +44,6 @@ public class ActionFile {
 
 		File fle = new File((String) path);
 		ArrayList<String> sb = new ArrayList<>(); //还回一个对应的json文件
-
 		if (fle.isFile()) { //如果是文件,不要取下一级	,还回资源提供查看。		
 			sb.add(FileUtil.getJsonInfo(fle));
 		}
@@ -56,21 +54,18 @@ public class ActionFile {
 					sb.add(FileUtil.getJsonInfo(my.getFile()));
 				}
 			}
-			else { //下一级目录为空				
-						//				sb.add(FileUtil.getJsonInfo(fle));
-				return;
+			else { //下一级目录为空,需要还回一个信息给前台。						
+                sb.add("nofile");
 			}
-
 		}
 
-		ObjectMapper mapper = new ObjectMapper();
 		response.responseJson(mapper.writeValueAsString(sb));
 
 	}
 
 	//save.do
 	public void save(Object path) throws IOException {
-		String data = request.getParameter("data");
+		String data = URLDecoder.decode(request.getParameter("data"),"UTF-8");
 		String status = "ok";
 		try {
 			FileUtil.writeFile(FileUtil.getRealFileLocate(path), data);
@@ -105,15 +100,14 @@ public class ActionFile {
 	}
 
 	//edit.do?path
-	public void edit(Object path) throws IOException {
+	public void edit(Object path) throws Exception {
 		log.info("编辑文件开始");
 		String url = String.valueOf(path);
 		String type = url.substring(url.indexOf(".") + 1);
-
 		if (!Arrays.asList(HttpContext.editTypeFile).contains(type)) {
 			return; //不能编辑的不处理。
 		}
-		response.responseHtml(FileUtil.fileToString(FileUtil.getRealFileLocate(path)));
+		response.responseHtml(FileUtil.fileToUTFString(FileUtil.getRealFileLocate(path)));
 	}
 
 	//upload.do?path

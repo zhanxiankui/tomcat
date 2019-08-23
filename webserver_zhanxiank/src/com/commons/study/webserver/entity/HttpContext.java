@@ -58,7 +58,7 @@ public class HttpContext {
 		return p1.getProperty(key).trim();
 	}
 
-	public void loadPropeyty() {
+	private void loadPropeyty() {
 		InputStream in = null;
 		InputStream ins = null;
 		try {

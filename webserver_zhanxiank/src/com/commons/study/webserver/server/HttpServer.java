@@ -36,7 +36,6 @@ public class HttpServer implements Callable<String> {
 
 	@Override
 	public String call() throws Exception {
-
 		try {
 			return server();
 		}
@@ -45,27 +44,26 @@ public class HttpServer implements Callable<String> {
 			return "bad";
 		}
 		finally {
-			log.info("关闭连接");			
-			if(!socket.isClosed())
-		 	socket.close();
+			log.info("关闭连接");
+			if (!socket.isClosed())
+				socket.close();
 		}
 	}
 
-	public  String server() throws Exception {
+	public String server() throws Exception {
 
 		InputStream inputStream = socket.getInputStream();
 		HttpRequest req = new HttpRequest(inputStream);
 		String url = req.getRequestURL();
-		
+
 		if (url != null) {
-		    OutputStream outputStream=socket.getOutputStream();
+			OutputStream outputStream = socket.getOutputStream();
 			HttpResponse response = new HttpResponse(outputStream);
 			String type = req.getContentType() == null ? "html" : req.getContentType();
 			String contentType = HttpContext.getInstance().getType(type);
 			if (contentType == null || contentType.equals("")) {
 				contentType = "text/plain";
 			}
-
 			if (!"/files".equals(url) && !"do".equals(type) && !"/project".equals(url)) //加载静态资源
 			{
 				response.setContentType(req.getContentType());
@@ -79,7 +77,6 @@ public class HttpServer implements Callable<String> {
 				contentType = "text/html; Charset=UTF-8";
 				response.setContentType(req.getContentType());
 				response.setHeader("Content-Type", contentType);
-
 				if (cmd != null && cmd.length() <= 3) {
 					File file = new File(HttpContext.webdir + "/" + "file.html");
 					String html = FileUtil.fileToString(file);
@@ -96,7 +93,6 @@ public class HttpServer implements Callable<String> {
 			}
 			outputStream.close();
 		}
-
 		return "success";
 	}
 

@@ -212,14 +212,13 @@ class tree {
 
             var file = form["upload"].files[0];
             var fd = new FormData();
-            fd.append("path", path);
+            fd.append("file", file);   //放在中间
             fd.append("fileName", file.name);
-            fd.append("file", file);
+            fd.append("path", path);
             let xhr = new XMLHttpRequest();
             xhr.open("POST", "/upload.do");
             // xhr.open("POST", "/upload.do?path=" + path + "&fileName=" + file.name);
             xhr.overrideMimeType("application/octet-stream");
-
             xhr.send(fd)
             xhr.onreadystatechange = () => {
                 if (xhr.readyState == 4 && xhr.status == 200) {

@@ -1,6 +1,5 @@
 package com.commons.study.filesystem;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -12,10 +11,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.commons.study.webserver.entity.HttpContext;
 import com.commons.study.webserver.entity.MyFile;
 import com.commons.study.webserver.net.HttpRequest;
@@ -27,7 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ActionFile {
 
 	private HttpRequest request;
+
 	private HttpResponse response;
+
 	private static final Logger log = LoggerFactory.getLogger(ActionFile.class);
 
 	//show.do?path=c/
@@ -41,7 +40,6 @@ public class ActionFile {
 					HttpContext.webdir + "/" + "ts/filesys.html");
 			return;
 		}
-
 		File fle = new File((String) path);
 		ArrayList<String> sb = new ArrayList<>(); //还回一个对应的json文件
 		if (fle.isFile()) { //如果是文件,不要取下一级	,还回资源提供查看。		
@@ -55,19 +53,18 @@ public class ActionFile {
 				}
 			}
 			else { //下一级目录为空,需要还回一个信息给前台。						
-                sb.add("nofile");
+				sb.add("nofile");
 			}
 		}
-
 		response.responseJson(mapper.writeValueAsString(sb));
 
 	}
 
 	//save.do
-	public void save(Object path) throws IOException {
-		String data = URLDecoder.decode(request.getParameter("data"),"UTF-8");
+	public void save(Object path) throws JsonProcessingException, IOException {
 		String status = "ok";
 		try {
+			String data = URLDecoder.decode(request.getParameter("data"), "UTF-8");
 			FileUtil.writeFile(FileUtil.getRealFileLocate(path), data);
 		}
 		catch (IOException e) {
@@ -76,8 +73,9 @@ public class ActionFile {
 		}
 		Map<String, String> smap = new HashMap<>();
 		smap.put("status", status);
-		response.responseJson(new ObjectMapper().writeValueAsString(smap));
-		; //返回保存的状态
+		response.responseJson(new ObjectMapper().writeValueAsString(smap)); //返回保存的状态
+
+	
 	}
 
 	///watchFile.do
@@ -118,7 +116,6 @@ public class ActionFile {
 		boolean cond = contentType != null && contentType.startsWith("multipart/form-data");
 
 		if ("POST".equals(request.getRequestMethod()) && body != null && cond) { //POST请求，Content-type为 multipart/form-data 
-
 			String boundary = contentType.substring(contentType.indexOf("boundary") + "boundary=".length());
 			String[] str = body.split("\r\n");
 			int c = 0;
@@ -133,43 +130,44 @@ public class ActionFile {
 						c = c + 2; //一行是Content-Type,一行是换行 
 
 						DataOutputStream fio = null; //这一行是换行 ,正式去读文件的内容 
-						try{
-						fio = new DataOutputStream(
-								new BufferedOutputStream(new FileOutputStream(new File("D:\\" + fileName))));
-						while (true) {
-							c++;
-							if (str[c].startsWith("--" + boundary)) { //下一个普通表单了。
-								break;
+						try {
+							fio = new DataOutputStream(
+									new BufferedOutputStream(new FileOutputStream(new File("D:\\" + fileName))));
+							while (true) {
+								c++;
+								if (str[c].startsWith("--" + boundary)) { //下一个普通表单了。
+									break;
+								}
+								temp = str[c];
+								fio.write(temp.getBytes("ISO-8859-1"));
+								fio.write("\r\n".getBytes("ISO-8859-1"));
+								//fio.writeBytes(str);
+								//fio.writeBytes("\r\n");
 							}
-							temp = str[c];
-							fio.write(temp.getBytes("ISO-8859-1"));
-							fio.write("\r\n".getBytes("ISO-8859-1"));
-							//fio.writeBytes(str);
-							//fio.writeBytes("\r\n");
+
 						}
-						
-						}finally {
+						finally {
 							fio.close();
 						}
 
 					}
-					
-					if (str[c]!=null&&str[c].indexOf("Content-Disposition:") >= 0){  //普通表单
-						Map<String,String>  map=new HashMap<>();
+
+					if (str[c] != null && str[c].indexOf("Content-Disposition:") >= 0) { //普通表单
+						Map<String, String> map = new HashMap<>();
 						temp = str[c].substring("Content-Disposition:".length());
 						String[] strs = temp.split(";");
 						String name = strs[strs.length - 1].replace("\"", "").split("=")[1];
-						c++;  //空格。						
+						c++; //空格。						
 						while (true) {
 							c++;
 							if (str[c].startsWith("--" + boundary)) {
 								break;
-							}							
+							}
 							map.put(name, str[c]);
 						}
-				
+
 					}
-					
+
 				}
 				while (("--" + boundary).equals(str));
 				//解析结束 

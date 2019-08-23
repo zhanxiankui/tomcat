@@ -1,5 +1,8 @@
 package com.commons.study.webserver.test;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,48 +35,41 @@ public class TestDemo {
 	@Test
 	public void test() throws ParseException, UnknownHostException, IOException {
 
-		ServerSocket serverSocket = null;
+		String src = "今天的天气真的不好";
 
-		serverSocket = new ServerSocket(8089, 1, InetAddress.getByName("127.0.0.1"));
+        byte[] buff = new byte[8];
 
-		while (true) {
+        InputStream is = new ByteArrayInputStream(src.getBytes("utf-8"));
 
-			Socket socket = serverSocket.accept(); //会阻塞在这里		
+        int len = -1;
 
-			try {
-				InputStream inputStream = socket.getInputStream();
-				OutputStream outputStream = socket.getOutputStream();
-				HttpRequest req = new HttpRequest(inputStream);
+        while(-1 != (len = is.read(buff))) {
 
-				if (req.getRequestURL() != null) {
-					HttpResponse response = new HttpResponse(outputStream);
-					String contentType = HttpContext.getInstance().getType(req.getContentType());
-					if (contentType == null || contentType.equals("")) {
-						contentType = "text/plain";
-					}
+            String str1 = new String(buff, 0, len);//new String(buff, 0, len, "UTF-8")这是两个方法的合体
 
-					response.setContentType(req.getContentType());
-					response.setHeader("Content-Type", contentType);
-					response.getStaticResource(contentType, req.getResource());
-				}
+            String str2 = new String(buff, "UTF-8");
 
-			}
-			catch (Exception e) {
+            System.out.println(str1);
 
-				log.error("出现问题", e);
+            System.out.println(str2);
 
-			}
-
-		}
+        }
 
 	}
 	
 	
 	
 	@Test
-	public void test1() {
-		
-
+	public void test1() throws IOException {
+		String str="\r\n";
+	    BufferedInputStream bf=new BufferedInputStream(new FileInputStream("D:/test.txt"));
+        int  n=bf.read();
+		while (n!=-1) {
+			n=bf.read();
+			System.out.println(((char) n)+"--------"+n);
+			
+		}
+		bf.close();
 	}
 	
 	

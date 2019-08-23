@@ -183,9 +183,9 @@ var tree = /** @class */ (function () {
         if (form["upload"].files.length > 0) {
             var file = form["upload"].files[0];
             var fd = new FormData();
-            fd.append("path", path);
+            fd.append("file", file); //放在中间
             fd.append("fileName", file.name);
-            fd.append("file", file);
+            fd.append("path", path);
             var xhr_1 = new XMLHttpRequest();
             xhr_1.open("POST", "/upload.do");
             // xhr.open("POST", "/upload.do?path=" + path + "&fileName=" + file.name);

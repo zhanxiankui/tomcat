@@ -39,8 +39,6 @@ public class HttpRequests implements Request {
 
 	private Map<String, List<Object>> parametes; //请求的参数。
 
-	private String requestHeaders; //请求头。
-
 	private String resource; //请求资源。
 
 	private String requestDatas; //http请求所有的信息。
@@ -93,10 +91,14 @@ public class HttpRequests implements Request {
 	public void pareInformat(InputStream stream) throws Exception {
 
 		StringBuffer sb = new StringBuffer();
-	
-		byte[] b=new byte[stream.available()];
-		stream.read(b);
-		sb.append(new String(b, HttpContext.Encoder));
+		int len = 0;  
+	    while (len == 0) {  
+	       len = stream.available();  
+	    }  
+	    
+	    byte[] b = new byte[len];  
+	    stream.read(b);  
+		sb.append(new String(b,0,b.length, HttpContext.Encoder));
 		
 		if(sb.length()==0)
 		{
@@ -108,7 +110,6 @@ public class HttpRequests implements Request {
 			rqline = requestDatas.split("\r\n");
 			this.getFirstHttpInfor(rqline[0]); //第一行数据解析。
 		}
-
 		int count = 1;
 		StringBuffer body =new StringBuffer();
 		if (rqline != null) {
@@ -186,7 +187,7 @@ public class HttpRequests implements Request {
 	}
 
 	@Override
-	public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
+	public void setCharacterEncoding(String env) {
 		this.characterEnconding = env;
 
 	}
@@ -229,11 +230,7 @@ public class HttpRequests implements Request {
 		return (String) parametes.get(name).get(0);
 	}
 
-	@Override
-	public List<Object> getParameterValues(String name) {
-		// TODO Auto-generated method stub
-		return parametes.get(name);
-	}
+
 
 	@Override
 	public void setAttribute(String name, Object o) {

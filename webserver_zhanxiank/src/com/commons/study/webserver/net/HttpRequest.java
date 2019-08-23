@@ -1,22 +1,15 @@
 package com.commons.study.webserver.net;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.commons.study.webserver.entity.HttpContext;
 
 /**
@@ -45,8 +38,6 @@ public class HttpRequest implements Request {
 
 	private Map<String, String> parametes; //请求的参数。
 
-	private String requestHeaders; //请求头。
-
 	private String resource; //请求资源。
 
 	private String requestDatas; //http请求所有的信息。
@@ -55,153 +46,15 @@ public class HttpRequest implements Request {
 
 	static final Logger log = LoggerFactory.getLogger(HttpRequest.class);
 
-	public HttpRequest(InputStream input) throws IOException {
+	public HttpRequest(InputStream input) throws Exception {
 		this.inputstream = input;
 		this.parametes = new HashMap<String, String>();
 		this.header = new HashMap<String, String>();
-		BufferedReader br = new BufferedReader(new InputStreamReader(input));
-		try {
-			pareInformat(br);
-		}
-		catch (Exception e) {
-			log.error("输入流解析有问题", e);
-		}
-	}
-	
-	
-	
-	public void pareInformat(BufferedReader br) throws Exception {
-		String str = null;
-		StringBuffer sb = new StringBuffer();
-		//读取请求行 
-		String requestLine = br.readLine(); //第一行数据
-		if (requestLine != null) {
-			getFirstHttpInfor(requestLine);
-			sb.append(requestLine).append("\n");
-			String[] reqs = requestLine.split(" ");
-			if (reqs != null && reqs.length > 0) {
-				if ("GET".equals(reqs[0])) {
-					this.requestMethod = "GET";
-				}
-				else {
-					this.requestMethod = "POST";
-				}
-			}
-		}
-		
-		//读取请求头 
-		while ((str = br.readLine()) != null) {
-			if ("".equals(str)) {   //下面就是post的内容了。
-				break;
-			}
-			if (str != null) {
-				if (str.indexOf(":") > 0) {
-					String[] strs = str.split(":");
-					header.put(strs[0].toLowerCase(), strs[1].trim());
-				}
-			}
-			sb.append(str).append("\n");
-		}
-
-		String contentType = header.get("content-type");
-		                //POST请求，Content-type为 multipart/form-data发送文件数据。application/x-www-form-urlencoded为普通表单提交 
-		
-		if("POST".equals(this.getMethod())&&contentType!=null&&contentType.startsWith("application/x-www-form-urlencoded")){
-			StringBuilder tempsb=new StringBuilder();
-			Thread.currentThread().sleep(100); //休眠一下应对阻塞
-			while ((str = br.readLine()) != null) {	
-				Thread.currentThread().sleep(100); //休眠一下应对阻塞
-				sb.append(str);
-				tempsb.append(str);	
-				
-				if(inputstream.available()==0){  //没有数据
-					continue;
-				}
-			}		
-			parseParameters(sb.toString());
-		}
-		
-		
-		if ("POST".equals(this.getMethod())&&contentType!=null&&contentType.startsWith("multipart/form-data")) {
-			//文件上传的分割位 这里只处理单个文件的上传 
-			
-			String boundary = contentType.substring(contentType.indexOf("boundary") + "boundary=".length());
-			while ((str = br.readLine()) != null) {	
-				//解析结束的标记 
-				do {
-					//读取boundary中的内容 
-					//读取Content-Disposition 
-					str = br.readLine();
-					           //文件上传 的头部
-					if (str.indexOf("Content-Disposition:") >= 0 && str.indexOf("filename") > 0) {
-						str = str.substring("Content-Disposition:".length());
-						String[] strs = str.split(";");
-						String fileName = strs[strs.length - 1].replace("\"", "").split("=")[1];
-						log.info("文件名称为:{}", fileName);
-						//这一行是Content-Type 
-						br.readLine();
-						//这一行是换行 
-						br.readLine();
-						//正式去读文件的内容 
-						BufferedWriter bw = null;
-						try {
-							bw = new BufferedWriter(new OutputStreamWriter(
-									new FileOutputStream("D:\\" +File.separator + fileName), "UTF-8"));
-							while (true) {
-								str = br.readLine();
-								if (str.startsWith("--" + boundary)) {
-									break;
-								}
-								bw.write(str);
-								bw.newLine();
-							}
-							bw.flush();
-						}
-						catch (Exception e) {
-
-						}
-						finally {
-							if (bw != null) {
-								bw.close();
-							}
-						}
-					}
-					if (str.indexOf("Content-Disposition:") >= 0) {
-						str = str.substring("Content-Disposition:".length());
-						String[] strs = str.split(";");
-						String name = strs[strs.length - 1].replace("\"", "").split("=")[1];
-						br.readLine();
-						StringBuilder stringBuilder = new StringBuilder();
-						while (true) {
-							str = br.readLine();
-							if (str.startsWith("--" + boundary)) {
-								break;
-							}
-							stringBuilder.append(str);
-						}
-						parametes.put(name, stringBuilder.toString());
-					}
-				}
-				while (("--" + boundary).equals(str));
-				//解析结束 
-				if (str.equals("--" + boundary + "--")) {
-					break;
-				}
-			}
-		}
-
-	}
-	
-	
-	
-	
-	public void parsePostParmer() {
-		
-		
+		parseRequest(input);
+		parseParameters(requestbody);
 	}
 
-	public void getFirstHttpInfor(String line) throws Exception {
-
+	public void parseUrl(String line) throws Exception {
 		log.info("第一行信息:{}", line);
 		if (line != null && line.length() > 0) {
 			String[] temp = line.split(" ");
@@ -220,12 +73,89 @@ public class HttpRequest implements Request {
 			else {
 				setResource(this.url.substring(this.url.indexOf("/") + 1));
 			}
-
 			if (this.resource.indexOf(".") > 0) {
 				this.contenType = this.resource.substring(this.resource.lastIndexOf(".") + 1);
 			}
 			log.info("请求的方式 {} 请求的url{}  请求的资源{}", requestMethod, url, resource);
 		}
+	}
+
+	public void parseRequest(InputStream stream) throws Exception {
+		StringBuffer sb = new StringBuffer();
+		int len = 0;
+		while (len == 0) {
+			len = stream.available();
+		}
+		byte[] b = new byte[len];
+		stream.read(b);
+		sb.append(new String(b, 0, b.length, HttpContext.Encoder));
+		if (sb.length() == 0) {
+			return;
+		}
+		this.requestDatas = sb.toString();
+		String[] rqline = null;
+		if (this.requestDatas.length() > 0) {
+			rqline = requestDatas.split("\r\n");
+			this.parseUrl(rqline[0]); //第一行数据解析。
+		}
+		int count = 1;
+		StringBuffer body = new StringBuffer();
+		if (rqline != null) {
+			for (int j = 1; j < rqline.length; j++) { //头部解析数据
+				log.info("头部信息 {}", rqline[j]);
+				if ("".equals(rqline[j])) {
+					break;
+				}
+				count++;
+				if (rqline[j] != null) {
+					if (rqline[j].indexOf(":") > 0) {
+						String[] strs = rqline[j].split(":");
+						header.put(strs[0].toLowerCase(), strs[1].trim());
+					}
+				}
+			}
+
+			for (int k = count; k < rqline.length; k++) { //body的信息解析
+				body.append(rqline[k]);
+			}
+		}
+		
+         String contentLength = header.getOrDefault("content-length", "0");  //body体的长度
+         boolean mark=Integer.parseInt(contentLength)>len/2;
+         int num=(body.toString().length()==0)?0:len/2;  //body没有内容直接指定为0
+		 while(getMethod().equals("POST")&&(body.toString().length()==0||mark)){ //在读
+		   len = stream.available();
+		   if(len==0){
+			   break;
+		   }
+		   byte[] tb=new byte[len];
+		   stream.read(tb);
+		   body.append(new String(tb, 0, len, HttpContext.Encoder)); 
+		   num+=len;
+		   mark=Integer.parseInt(contentLength)>num;	 
+		}		
+		requestbody = body.toString(); //post请求有相关的东西。
+	}
+
+	public void parsePostBody() {
+		if (this.requestbody == null && requestbody.length() == 0) {
+			return;
+		}
+		StringBuilder sb = new StringBuilder();
+		String contentType = header.get("content-type");
+		//POST请求，Content-type为 multipart/form-data发送文件数据。application/x-www-form-urlencoded为普通表单提交 
+
+		if ("POST".equals(this.getMethod()) && contentType != null
+				&& contentType.startsWith("application/x-www-form-urlencoded")) {
+			String[] rqline = requestDatas.split("\r\n");
+			for (int i = 0; i < rqline.length; i++) {
+				if (!rqline[i].equals("")) {
+					sb.append(rqline[i]);
+				}
+			}
+			parseParameters(sb.toString());
+		}
+		parseParameters(sb.toString());
 	}
 
 	public void setResource(String name) {
@@ -238,11 +168,10 @@ public class HttpRequest implements Request {
 	}
 
 	/**
-	 * 设置查询的参数,这里的key和value独一无二。
+	 * 解析请求的参数
 	 * @param str
 	 */
 	private void parseParameters(String str) {
-
 		if (str != null) {
 			String[] temp = str.split("&");
 			for (String ts : temp) {
@@ -270,7 +199,7 @@ public class HttpRequest implements Request {
 	}
 
 	@Override
-	public void setCharacterEncoding(String env){
+	public void setCharacterEncoding(String env) {
 		this.characterEnconding = env;
 
 	}
@@ -306,12 +235,8 @@ public class HttpRequest implements Request {
 
 	@Override
 	public String getParameter(String name) {
-		// TODO Auto-generated method stub
-		if (parametes.get(name) == null)
-			return null;
-		return  parametes.get(name);
+		return parametes.get(name);
 	}
-
 
 	@Override
 	public void setAttribute(String name, Object o) {
@@ -325,26 +250,11 @@ public class HttpRequest implements Request {
 		return null;
 	}
 
-	@Override
-	public Enumeration<String> getAttributeNames() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void setContentType(String value) {
 
 		this.contenType = value;
-
-	}
-	
-	
-	public String getRequestMethod() {
-		return requestMethod;
-	}
-
-	public void setRequestMethod(String requestMethod) {
-		this.requestMethod = requestMethod;
 	}
 
 	public String getRequestDatas() {
@@ -355,5 +265,10 @@ public class HttpRequest implements Request {
 		return requestbody;
 	}
 
+	@Override
+	public Enumeration<String> getAttributeNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -54,7 +54,7 @@ public class WebServer {
 				log.info("开启{}次连接:",count++);
 				Socket socket  = serverSocket.accept(); //会阻塞在这里		
 				Future<String> future = threadPool.submit(new HttpServer(socket));
-				log.debug("线程池是否关闭{}", threadPool.isShutdown());
+				socket.setSoTimeout(6000);
 			}
 		}
 		catch (Exception e) {

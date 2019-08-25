@@ -58,7 +58,6 @@ public class FileUtil {
 	 * @return
 	 */
 	public static ArrayList<MyFile> getDirFils(String path) {
-
 		File file = new File(path);
 		ArrayList<MyFile> filelist = new ArrayList<>();
 		if (file.isFile()) {
@@ -124,7 +123,6 @@ public class FileUtil {
 				log.error(e.toString());
 			}
 		}
-
 		return temp;
 	}
 
@@ -213,7 +211,6 @@ public class FileUtil {
 		if (fle.isFile()) { //如果是文件,没有还回
 			return null;
 		}
-
 		ArrayList<MyFile> list = FileUtil.getDirFils(cmd); //获取下一级目录	
 		StringBuilder sb = new StringBuilder();
 		String pa = cmd; //默认路径

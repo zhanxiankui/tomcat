@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.commons.study.webserver.entity.HttpContext;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy.KebabCaseStrategy;
 
 /**
  *  请求类，封装了通过scoket解析自http请求的东西。
@@ -79,12 +80,25 @@ public class HttpRequest implements Request {
 			log.info("请求的方式 {} 请求的url{}  请求的资源{}", requestMethod, url, resource);
 		}
 	}
+	
+	
+	public void  readAllData(InputStream  in) throws IOException{
+		   int count=1024;
+		   byte[] b = new byte[count];
+		   int readCount = 0; // 已经成功读取的字节的个数
+		   while (readCount < count) {
+		    readCount += in.read(b, readCount, count - readCount);
+		    if(readCount==-1){
+		    	break;
+		    }
+		   }
+	}
 
 	public void parseRequest(InputStream stream) throws Exception {
 		StringBuffer sb = new StringBuffer();
 		int len = 0;
 		while (len == 0) {
-			len = stream.available();
+			len = stream.available();  //能够读到的字节数，最大为int的最大值。至少读一次，数据可能缺少。
 		}
 		byte[] b = new byte[len];
 		stream.read(b);
@@ -95,19 +109,23 @@ public class HttpRequest implements Request {
 		this.requestDatas = sb.toString();
 		String[] rqline = null;
 		if (this.requestDatas.length() > 0) {
-			rqline = requestDatas.split("\r\n");
+			rqline = requestDatas.split("\r\n");  //会拆掉空字符，导致换行吃掉需要注意。
 			this.parseUrl(rqline[0]); //第一行数据解析。
 		}
-		int count = 1;
+
 		StringBuffer body = new StringBuffer();
+		int  headBlen=rqline[0].length()+2;  //一个英文占用一个字节
+		int j=1;
 		if (rqline != null) {
-			for (int j = 1; j < rqline.length; j++) { //头部解析数据
-				log.info("头部信息 {}", rqline[j]);
-				if ("".equals(rqline[j])) {
+			for ( j = 1; j < rqline.length; j++) { //头部解析数据
+//				log.info("头部信息 {}", rqline[j]);
+				if ("".equals(rqline[j])||rqline[j].startsWith("--")) { //post请求的换行被拆分成空字符。
+					headBlen+=2;
 					break;
 				}
-				count++;
+		
 				if (rqline[j] != null) {
+					headBlen+=(rqline[j].length()+2);
 					if (rqline[j].indexOf(":") > 0) {
 						String[] strs = rqline[j].split(":");
 						header.put(strs[0].toLowerCase(), strs[1].trim());
@@ -115,26 +133,51 @@ public class HttpRequest implements Request {
 				}
 			}
 
-			for (int k = count; k < rqline.length; k++) { //body的信息解析
+			for (int k = j+1; k < rqline.length; k++) { //body的信息解析	
 				body.append(rqline[k]);
+				if(k<rqline.length-1) //最后一个不是换行不能追加。
+				{
+					body.append("\r\n");
+				}
+			}
+			if(rqline[rqline.length-1].equals("")){ //补充上空格
+				body.append("\r\n");
 			}
 		}
 		
-         String contentLength = header.getOrDefault("content-length", "0");  //body体的长度
-         boolean mark=Integer.parseInt(contentLength)>len/2;
-         int num=(body.toString().length()==0)?0:len/2;  //body没有内容直接指定为0
-		 while(getMethod().equals("POST")&&(body.toString().length()==0||mark)){ //在读
+		if(getMethod().equals("GET")){  //POST请求才继续。
+			return;
+		}
+		
+		log.info("请求的头部长度为:{} ,已经读取的body长度:{}  总的读取长度:{} 计算的长度为:{}",headBlen,body.toString().length(),len,len-headBlen);
+		int bodyLen=body.toString().length();
+		int min=len-headBlen>=bodyLen?bodyLen:len-headBlen; //相等就计算准确，否则取小的哪一个。	
+         String contentLength = header.getOrDefault("content-length", "0");  //body体的长度,排除没有这个属性。
+          Long conlen= Long.parseLong(contentLength);   //118,960,870
+         boolean mark=conlen>min;
+         int num=(bodyLen==0)?0:min;  //body没有内容直接指定为0
+         long count=0;
+		 while(bodyLen==0||mark){ //在读
 		   len = stream.available();
-		   if(len==0){
-			   break;
-		   }
 		   byte[] tb=new byte[len];
 		   stream.read(tb);
 		   body.append(new String(tb, 0, len, HttpContext.Encoder)); 
 		   num+=len;
-		   mark=Integer.parseInt(contentLength)>num;	 
-		}		
+		   mark=conlen>num;	
+		   log.debug(count+" 在读取body体里面的内容： 读取进度为-----------------: {}",num*1.00/conlen);
+		   bodyLen=num;
+		   if(len==0){  
+			   count++; //20次读取后没有反应就终止程序,休眠一下等待数据, 测试拿数据没有，通过调整这个次数给予反应
+			   Thread.sleep(3000);
+			   if(count==20)
+				   break;
+				   if(conlen>118960870){
+					   inputstream.close();  //大文件100m医生，可能阻塞，关闭流。
+				   } 
+		    }		
+		   }
 		requestbody = body.toString(); //post请求有相关的东西。
+		log.info("请求的contentLength是 {}, 已经读取的body大小为: {}",contentLength,requestbody.length());
 	}
 
 	public void parsePostBody() {
@@ -144,7 +187,6 @@ public class HttpRequest implements Request {
 		StringBuilder sb = new StringBuilder();
 		String contentType = header.get("content-type");
 		//POST请求，Content-type为 multipart/form-data发送文件数据。application/x-www-form-urlencoded为普通表单提交 
-
 		if ("POST".equals(this.getMethod()) && contentType != null
 				&& contentType.startsWith("application/x-www-form-urlencoded")) {
 			String[] rqline = requestDatas.split("\r\n");
@@ -179,7 +221,7 @@ public class HttpRequest implements Request {
 				if (t.length == 2) {
 					parametes.put(t[0], t[1]);
 				}
-				else {
+				else if(t.length==1) {
 					parametes.put(t[0], null);
 				}
 			}

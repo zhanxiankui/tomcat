@@ -213,7 +213,7 @@ class tree {
             var file = form["upload"].files[0];
             var fd = new FormData();
             fd.append("file", file);   //放在中间
-            fd.append("fileName", file.name);
+            fd.append("fileName", encodeURIComponent(file.name));
             fd.append("path", path);
             let xhr = new XMLHttpRequest();
             xhr.open("POST", "/upload.do");

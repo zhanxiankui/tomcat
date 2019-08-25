@@ -53,11 +53,11 @@ public class HttpServer implements Callable<String> {
 	public String server() throws Exception {
 
 		InputStream inputStream = socket.getInputStream();
+		OutputStream outputStream = socket.getOutputStream();
 		HttpRequest req = new HttpRequest(inputStream);
 		String url = req.getRequestURL();
-
+		
 		if (url != null) {
-			OutputStream outputStream = socket.getOutputStream();
 			HttpResponse response = new HttpResponse(outputStream);
 			String type = req.getContentType() == null ? "html" : req.getContentType();
 			String contentType = HttpContext.getInstance().getType(type);
@@ -91,8 +91,13 @@ public class HttpServer implements Callable<String> {
 				FileServer fileServer = new FileServer(req, response);
 				fileServer.server();
 			}
-			outputStream.close();
-		}
+//			outputStream.close();
+//			socket.close();
+		}	
+		outputStream.close();
+		socket.close();
+		log.debug("线程阻塞{}  ---- 线程关闭{} ---",socket.isBound(),socket.isClosed());
+		
 		return "success";
 	}
 

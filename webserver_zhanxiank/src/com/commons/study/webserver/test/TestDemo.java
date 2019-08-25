@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -74,9 +75,23 @@ public class TestDemo {
 	
 	
 	@Test
-	public void test3() {
+	public void test3() throws UnsupportedEncodingException {
+		String str="dflx\r\nfghh\r\ngh\r\n";
+		StringBuilder sb=new StringBuilder();
+		String[] st=str.split("\r\n",-1);
 		
-//	Tree tree=new Tree("D:/", firstChild, nextSibling);
+		for(int i=0; i<st.length; i++){
+		   sb.append(st[i]);
+		   sb.append("\r\n");
+		       
+		}
+		
+		  if(st[st.length-1].equals(""))
+			   sb.delete(sb.toString().length()-2, sb.toString().length());
+		
+		
+		 byte[] len =sb.toString().getBytes("utf-8");
+		    System.out.println(sb+"------rrrr--------"+len.length+"--"+sb.toString().equals(str));
 		
 		
 	}

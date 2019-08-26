@@ -24,7 +24,7 @@ import com.commons.study.webserver.util.FileUtil;
  * @author w
  * @createdate 2019年8月6日
  */
-public class HttpServer implements Callable<String> {
+public class HttpServer implements Callable<String> { 
 
 	static final Logger log = LoggerFactory.getLogger(HttpServer.class);
 
@@ -50,14 +50,13 @@ public class HttpServer implements Callable<String> {
 		}
 	}
 
-	public String server() throws Exception {
+	public String server() throws Exception {   //需要做成   https://www.cnblogs.com/xifengxiaoma/p/9451044.html
 
 		InputStream inputStream = socket.getInputStream();
 		OutputStream outputStream = socket.getOutputStream();
 		HttpRequest req = new HttpRequest(inputStream);
-		String url = req.getRequestURL();
-		
-		if (url != null) {
+		String url = req.getRequestURL();	
+		if (url != null) {           
 			HttpResponse response = new HttpResponse(outputStream);
 			String type = req.getContentType() == null ? "html" : req.getContentType();
 			String contentType = HttpContext.getInstance().getType(type);
@@ -91,13 +90,10 @@ public class HttpServer implements Callable<String> {
 				FileServer fileServer = new FileServer(req, response);
 				fileServer.server();
 			}
-//			outputStream.close();
-//			socket.close();
 		}	
 		outputStream.close();
 		socket.close();
-		log.debug("线程阻塞{}  ---- 线程关闭{} ---",socket.isBound(),socket.isClosed());
-		
+		log.debug("线程阻塞{}  ---- 线程关闭{} ---",socket.isBound(),socket.isClosed());	
 		return "success";
 	}
 

@@ -3,12 +3,13 @@ package com.commons.study.webserver.entity;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Properties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.core.util.StatusListenerConfigHelper;
+import com.commons.study.webserver.test.TestDemo;
+import com.commons.study.webserver.util.XmlUtil;
 
 /**
  * 单列模型，常量类。
@@ -31,13 +32,20 @@ public class HttpContext {
 	//资源存放的路径
 	public static String webdir = HttpContext.class.getClassLoader().getResource("resource").getPath();
 
-	public static final int threadNums = 6; //线程池的线程数量。
+	public static final int ThreadNums = 6; //线程池的线程数量。
 	
 	public  static final String Encoder="ISO_8859_1";
 	
 	public static final  String  UTF8="UTF-8";
 
 	public static final String[] editTypeFile = { "html", "txt", "js", "css", "xml" }; //可以编辑的文件类型。
+	
+	public static  Map<String, String> fileConfMap;  //存放文件系统配置文件。
+	
+	static{
+		init();
+	}
+	
 
 	private HttpContext() {
 		loadPropeyty();
@@ -67,15 +75,12 @@ public class HttpContext {
 			ins = HttpContext.class.getClassLoader().getResourceAsStream("conf/statas.properties");
 			p1.load(ins);
 			log.debug("加载配置文件{},{}成功", p, p1);
-
 		}
 		catch (FileNotFoundException e) {
-
 			log.error("读取配置文件 出现异常:{}", e);
 		}
 		catch (IOException e) {
 			log.error("读取配置文件 出现异常:{}", e);
-
 		}
 		finally {
 			if (in != null) {
@@ -86,7 +91,6 @@ public class HttpContext {
 					log.warn("关闭配置文件 出现异常:{}", e);
 				}
 			}
-
 			if (ins != null) {
 				try {
 					ins.close();
@@ -99,4 +103,12 @@ public class HttpContext {
 
 	}
 
+	
+	
+	private  static void init() {
+		XmlUtil xml=new XmlUtil();
+		String path=HttpContext.class.getClassLoader().getResource("conf/filesysconf.xml").getPath();
+		fileConfMap=xml.parseXmlToMap(path);	
+	}
+	
 }

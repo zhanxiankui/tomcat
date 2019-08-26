@@ -35,7 +35,7 @@ public class FileServer {
 	public void server() {
 		String url = request.getRequestURL();
 		String path = request.getParameter("path");
-		handle("com.commons.study.filesystem.ActionFile", map.get(url), path);
+		handle("com.commons.study.filesystem.ActionFileSystem", map.get(url), path);
 
 	}
 

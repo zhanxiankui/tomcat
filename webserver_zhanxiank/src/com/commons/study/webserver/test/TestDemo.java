@@ -13,6 +13,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
@@ -27,6 +28,7 @@ import com.commons.study.webserver.net.HttpRequest;
 import com.commons.study.webserver.net.HttpResponse;
 import com.commons.study.webserver.server.HttpServer;
 import com.commons.study.webserver.util.FileUtil;
+import com.commons.study.webserver.util.XmlUtil;
 
 //测试
 public class TestDemo {
@@ -96,4 +98,15 @@ public class TestDemo {
 		
 	}
 
+	
+	@Test
+	public void test5() {
+		XmlUtil xml=new XmlUtil();
+		String path=TestDemo.class.getClassLoader().getResource("conf/filesysconf.xml").getPath();
+	   Map<String,String> map=	xml.parseXmlToMap(path);
+		
+	}
+	
+	
+	
 }

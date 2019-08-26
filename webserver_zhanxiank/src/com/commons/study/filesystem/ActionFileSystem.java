@@ -21,13 +21,13 @@ import com.commons.study.webserver.util.FileUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ActionFile {
+public class ActionFileSystem {
 
 	private HttpRequest request;
 
 	private HttpResponse response;
 
-	private static final Logger log = LoggerFactory.getLogger(ActionFile.class);
+	private static final Logger log = LoggerFactory.getLogger(ActionFileSystem.class);
 
 	//show.do?path=c/
 	public void show(Object pa) throws IOException {

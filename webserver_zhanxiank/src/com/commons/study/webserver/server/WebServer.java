@@ -4,17 +4,12 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.commons.study.webserver.entity.HttpContext;
 
 
@@ -27,7 +22,8 @@ import com.commons.study.webserver.entity.HttpContext;
  */
 public class WebServer {
 
-	private static final int port = 8089; //端口
+	private static final String port = HttpContext.fileConfMap.get("port"); //端口
+	private static final String threadNum=HttpContext.fileConfMap.get("threadnum");
 
 	private boolean isShutDown = false; //是否关闭
 
@@ -40,21 +36,21 @@ public class WebServer {
 
 	}
 	
-	
 
 	private void startServer() throws InterruptedException, ExecutionException, IOException {
 		ServerSocket serverSocket = null;
+		Socket socket=null;
 		ExecutorService threadPool = null;
 		int count=0;
 		try {
 			log.info("服务器启动成功");
-			serverSocket = new ServerSocket(port, 1, InetAddress.getByName("127.0.0.1"));
-			threadPool = Executors.newFixedThreadPool(HttpContext.threadNums);
+			serverSocket = new ServerSocket(Integer.parseInt(port), 1, InetAddress.getByName("127.0.0.1"));
+			threadPool = Executors.newFixedThreadPool(Integer.parseInt(threadNum));
 			while (!isShutDown) {
 				log.info("开启{}次连接:",count++);
-				Socket socket  = serverSocket.accept(); //会阻塞在这里		
+			    socket  = serverSocket.accept(); //会阻塞在这里		
+			    socket.setSoTimeout(6000);
 				Future<String> future = threadPool.submit(new HttpServer(socket));
-				socket.setSoTimeout(6000);
 			}
 		}
 		catch (Exception e) {
@@ -62,6 +58,11 @@ public class WebServer {
 			serverSocket.close();
 		}
 
+		finally {
+			if(!socket.isClosed()){
+				socket.close();
+			}
+		}
 	}
 
 }

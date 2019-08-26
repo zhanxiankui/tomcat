@@ -4,16 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.commons.study.threedemo.FileToByte;
 import com.commons.study.webserver.entity.HttpContext;
 
@@ -53,11 +47,9 @@ public class HttpResponse implements Response {
 		status = 200 + " " + httpContext.getStats("200");
 		writeHeader(HttpContext.getInstance().getType("json"), status);	
 		outputStream.write(data.getBytes());	
-		outputStream.flush();
-		
+		outputStream.flush();	
 	}
-	
-	
+
 	
 	/**
 	 * 返回html代码
@@ -65,15 +57,13 @@ public class HttpResponse implements Response {
 	 * @throws IOException
 	 */
 	public void responseHtml(String html) throws IOException {		
-		log.info("返回html代码");
-		
+		log.info("返回html代码");	
 		if(html==null){
 			return;
 		}
 		status = 200 + " " + httpContext.getStats("200");
 		writeHeader(HttpContext.getInstance().getType("html"), status);	
 		outputStream.write(html.getBytes());
-	
 	}
 	
 	
@@ -85,7 +75,6 @@ public class HttpResponse implements Response {
 	 */
 	public void responseFile(String contentType, File f) throws Exception {
 		status = 200 + " " + httpContext.getStats("200");
-
 		String first = "HTTP/1.1 " + status + "\r\n";
 		String responseHeader = "Content-Type:" + contentType + "\r\n";
 		String fmark = "Content-Disposition: attachment;filename=" + f.getName() + "\r\n";
@@ -97,7 +86,6 @@ public class HttpResponse implements Response {
 		outputStream.write("\r\n".getBytes());
 		outputStream.write(new FileToByte().file2buf(f));
 		outputStream.flush();
-
 	}
 	
 	
@@ -107,7 +95,6 @@ public class HttpResponse implements Response {
 	 * @throws IOException 
 	 */
 	public void getStaticResource(String contentType, String name) throws IOException {
-
 		log.info("请求的资源为: {}", name);
 		File file = new File(name);
 		String status = "200";
@@ -115,7 +102,6 @@ public class HttpResponse implements Response {
 		setContentType(contentType);
 		if (file.exists() && file.isFile()) {
 			status = status + " " + httpContext.getStats(status);
-//			outputStream.write("hello".getBytes());
 			writeHeader(contentType, status);
 			writeFile(file);
 		}
@@ -124,9 +110,9 @@ public class HttpResponse implements Response {
 			writeHeader(contentType, status);
 			writeFile(new File(HttpContext.webdir+"/"+  "404.html"));
 		}	  
-	
 	}
 
+	
 	public void writeFile(File file) {
 		FileInputStream fis = null;
 		try {
@@ -150,11 +136,11 @@ public class HttpResponse implements Response {
 		}
 	}
 
+	
 	public void writeHeader(String contentType, String status) {
 
 		String first = "HTTP/1.1 " + status + "\r\n";
 		String responseHeader = "Content-Type:" + contentType + "\r\n";
-
 		log.info("返回头部信息{} ", responseHeader);
 		try {
 			outputStream.write(first.getBytes());

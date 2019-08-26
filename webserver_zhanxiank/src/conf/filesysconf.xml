@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<filesys>
+
+<!-- 文件系统的展现目录  -->	
+<filedir>"d:/"</filedir>
+
+<!-- 监听的端口号 -->
+<port>8089</port>
+
+<!-- 线程池的线程数量  -->
+<threadnum>6</threadnum>	
+
+</filesys>		

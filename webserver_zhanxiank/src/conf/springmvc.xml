@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web>
+
+<servlet>
+    <servlet-name>springmvc</servlet-name>
+    <servlet-class>
+        org.springframework.web.servlet.DispatcherServlet
+   </servlet-class>
+   <load-on-startup>1</load-on-startup>
+</servlet>
+
+
+<!-- 映射路径 ，url-pattern是"/"DispatcherServlet会帮我们截获所有的url请求  -->	
+<servlet-mapping>
+    <servlet-name>springmvc</servlet-name>
+    <url-pattern>*.do,/</url-pattern>
+</servlet-mapping>
+
+
+<!-- 包的扫描路径   -->
+<component-scan base-package="com.xxx.controller"/>
+</web>

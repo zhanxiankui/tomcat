@@ -214,23 +214,17 @@ public class FileUtil {
 		ArrayList<MyFile> list = FileUtil.getDirFils(cmd); //获取下一级目录	
 		StringBuilder sb = new StringBuilder();
 		String pa = cmd; //默认路径
-
 		if (list.size() > 0) { //下一级目录有文件
 			File f = list.get(0).getFile().getParentFile() == null ? list.get(0).getFile()
 					: list.get(0).getFile().getParentFile();
 			pa = f.getParent() == null ? f.getPath() : f.getParent().replace("\\", "/");
 		}
 		else { //下一级目录为空
-
 			pa = fle.getParent();
 			if (parent != null) //这是还回的操作。
 				list = FileUtil.getDirFils(pa);
-
 		}
-
 		pa = pa + "&mark=parent";
-
-		//   		path=path.replace("\\", "/");
 		sb.append("<p> <a  href=" + "'" + pa + "'" + "  onclick= \"getDatas(" + "'" + pa + "'" + ")\" >" + "上一级目录"
 				+ "  </a></p>");
 		sb.append(" <table id=\"files\" border=\"0\" width=\"80%\"> ").append(
@@ -246,7 +240,6 @@ public class FileUtil {
 	}
 
 	public static String writeFile(File f, String data) throws IOException {
-
 		OutputStream out = null;
 		try {
 			out = new FileOutputStream(f);

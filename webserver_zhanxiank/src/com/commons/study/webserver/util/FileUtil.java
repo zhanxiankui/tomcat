@@ -4,27 +4,23 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.commons.study.webserver.entity.HttpContext;
 import com.commons.study.webserver.entity.MyFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import ch.qos.logback.core.util.Loader;
 
 /**
  * 文件工具类，定义了对文件操作的函数
@@ -126,70 +122,7 @@ public class FileUtil {
 		return temp;
 	}
 
-	public static String gueseCode(File file) {
-		String charset = "GBK";
-		byte[] first3Bytes = new byte[3];
-		try {
-			boolean checked = false;
-			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-			bis.mark(0);
-			int read = bis.read(first3Bytes, 0, 3);
-			if (read == -1) {
-				bis.close();
-				return charset; // 文件编码为 ANSI
-			}
-			else if (first3Bytes[0] == (byte) 0xFF && first3Bytes[1] == (byte) 0xFE) {
-				charset = "UTF-16LE"; // 文件编码为 Unicode
-				checked = true;
-			}
-			else if (first3Bytes[0] == (byte) 0xFE && first3Bytes[1] == (byte) 0xFF) {
-				charset = "UTF-16BE"; // 文件编码为 Unicode big endian
-				checked = true;
-			}
-			else if (first3Bytes[0] == (byte) 0xEF && first3Bytes[1] == (byte) 0xBB && first3Bytes[2] == (byte) 0xBF) {
-				charset = "UTF-8"; // 文件编码为 UTF-8
-				checked = true;
-			}
-			bis.reset();
-			if (!checked) {
-				while ((read = bis.read()) != -1) {
-					if (read >= 0xF0)
-						break;
-					if (0x80 <= read && read <= 0xBF) // 单独出现BF以下的，也算是GBK
-						break;
-					if (0xC0 <= read && read <= 0xDF) {
-						read = bis.read();
-						if (0x80 <= read && read <= 0xBF) // 双字节 (0xC0 - 0xDF)
-							// (0x80 - 0xBF),也可能在GB编码内
-							continue;
-						else
-							break;
-					}
-					else if (0xE0 <= read && read <= 0xEF) { // 也有可能出错，但是几率较小
-						read = bis.read();
-						if (0x80 <= read && read <= 0xBF) {
-							read = bis.read();
-							if (0x80 <= read && read <= 0xBF) {
-								charset = "UTF-8";
-								break;
-							}
-							else
-								break;
-						}
-						else
-							break;
-					}
-				}
-			}
-			bis.close();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		log.debug("--文件- 采用的字符集为: [" + charset + "]");
-		return charset;
-	}
-
+	
 	public static String getJsonInfo(File f) throws JsonProcessingException {
 		if (f == null) {
 			return null;
@@ -263,6 +196,92 @@ public class FileUtil {
 		}
 		return file;
 	}
+	
+	
+	
+	public static List<String> getRealClassPath(String packageName) {
+		List<String> list=new LinkedList<>();
+	
+		URL url= FileUtil.class.getClassLoader().getResource(packageName.replace(".", "/"));
+		if(url!=null){
+			   String path=url.getPath();
+			   String[] temp=new File(path).list();
+				for(String st:temp){
+					list.add(packageName+"."+st.split("\\.")[0].trim());	
+				}
+		}
+//		String path=FileUtil.class.getClassLoader().getResource(packageName.replace(".", "/")).getPath();
+//		String[] temp=new File(path).list();
+//		for(String st:temp){
+//			list.add(packageName+"."+st.split("\\.")[0].trim());	
+//		}
+		return list;
+	}
+	
+	public static String gueseCode(File file) {
+		String charset = "GBK";
+		byte[] first3Bytes = new byte[3];
+		try {
+			boolean checked = false;
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+			bis.mark(0);
+			int read = bis.read(first3Bytes, 0, 3);
+			if (read == -1) {
+				bis.close();
+				return charset; // 文件编码为 ANSI
+			}
+			else if (first3Bytes[0] == (byte) 0xFF && first3Bytes[1] == (byte) 0xFE) {
+				charset = "UTF-16LE"; // 文件编码为 Unicode
+				checked = true;
+			}
+			else if (first3Bytes[0] == (byte) 0xFE && first3Bytes[1] == (byte) 0xFF) {
+				charset = "UTF-16BE"; // 文件编码为 Unicode big endian
+				checked = true;
+			}
+			else if (first3Bytes[0] == (byte) 0xEF && first3Bytes[1] == (byte) 0xBB && first3Bytes[2] == (byte) 0xBF) {
+				charset = "UTF-8"; // 文件编码为 UTF-8
+				checked = true;
+			}
+			bis.reset();
+			if (!checked) {
+				while ((read = bis.read()) != -1) {
+					if (read >= 0xF0)
+						break;
+					if (0x80 <= read && read <= 0xBF) // 单独出现BF以下的，也算是GBK
+						break;
+					if (0xC0 <= read && read <= 0xDF) {
+						read = bis.read();
+						if (0x80 <= read && read <= 0xBF) // 双字节 (0xC0 - 0xDF)
+							// (0x80 - 0xBF),也可能在GB编码内
+							continue;
+						else
+							break;
+					}
+					else if (0xE0 <= read && read <= 0xEF) { // 也有可能出错，但是几率较小
+						read = bis.read();
+						if (0x80 <= read && read <= 0xBF) {
+							read = bis.read();
+							if (0x80 <= read && read <= 0xBF) {
+								charset = "UTF-8";
+								break;
+							}
+							else
+								break;
+						}
+						else
+							break;
+					}
+				}
+			}
+			bis.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		log.debug("--文件- 采用的字符集为: [" + charset + "]");
+		return charset;
+	}
+
 
 	public File getFile() {
 		return file;

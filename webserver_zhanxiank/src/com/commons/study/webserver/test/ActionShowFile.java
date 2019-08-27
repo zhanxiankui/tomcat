@@ -1,4 +1,4 @@
-package com.commons.study.webserver.action;
+package com.commons.study.webserver.test;
 
 import java.io.IOException;
 import java.util.ArrayList;

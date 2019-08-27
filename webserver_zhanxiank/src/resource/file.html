@@ -46,16 +46,13 @@
                     var response = ajax.response || ajax.responseText || {}; // 获取返回值
                     var dom = document.getElementById("show")
                     dom.innerHTML = response;
-
-
-
                 }
             }
 
             url = encodeURI("files?path="+url);
 
             // 第三步： open一个链接
-            ajax.open("post", url, true); //true异步请求，false同步
+            ajax.open("GET", url, true); //true异步请求，false同步
             // ajax.setRequestHeader && ajax.setRequestHeader('Content-Type', 'application/json;charset=utf-8');   
             // 第四步： send一个请求。 可以发送对象和字符串，不需要传递数据发送null
 

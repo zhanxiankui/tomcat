@@ -3,6 +3,7 @@ package com.commons.study.webserver.entity;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.slf4j.Logger;
@@ -41,6 +42,8 @@ public class HttpContext {
 	public static final String[] editTypeFile = { "html", "txt", "js", "css", "xml" }; //可以编辑的文件类型。
 	
 	public static  Map<String, String> fileConfMap;  //存放文件系统配置文件。
+	
+	public static Map<String,List<String>> sprConf;  //springmvc的配置文件。
 	
 	static{
 		init();
@@ -108,7 +111,9 @@ public class HttpContext {
 	private  static void init() {
 		XmlUtil xml=new XmlUtil();
 		String path=HttpContext.class.getClassLoader().getResource("conf/filesysconf.xml").getPath();
-		fileConfMap=xml.parseXmlToMap(path);	
+		fileConfMap=xml.parseXmlToMap(path);
+		String spath=HttpContext.class.getClassLoader().getResource("conf/springmvc.xml").getPath();
+		sprConf=xml.parseSpringmvcXml(spath);
 	}
 	
 }

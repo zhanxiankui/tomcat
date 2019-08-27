@@ -1,4 +1,4 @@
-package com.commons.study.webserver.net;
+package com.commons.study.webserver.test;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,6 +18,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.commons.study.webserver.entity.HttpContext;
+import com.commons.study.webserver.net.Request;
 
 /**
  *  请求类，封装了通过scoket解析自http请求的东西。

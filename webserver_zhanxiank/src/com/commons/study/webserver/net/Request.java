@@ -13,7 +13,6 @@ import java.util.Map;
  */
 
 public interface Request {
-	
 
     public String getProtocol(); 
     
